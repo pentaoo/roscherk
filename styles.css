@@ -688,13 +688,13 @@ button {
   z-index: 2;
   right: 32px;
   bottom: 42px;
-  gap: 12px;
+  gap: 24px;
   --button-width: 297px;
   --button-hover-width: 377px;
   min-width: var(--button-width);
   width: var(--button-width);
   height: 144px;
-  padding: 0 52px 4px;
+  padding: 52px 52px;
   border: 6px solid var(--green-dark);
   border-radius: 72px;
   background-color: var(--green);
@@ -733,6 +733,10 @@ button {
 .collection-card__cta .button-s__icon svg {
   width: 40px;
   height: 40px;
+}
+
+.collection-card__cta-label {
+  letter-spacing: -2%;
 }
 
 @keyframes collection-cta-label-replay {
