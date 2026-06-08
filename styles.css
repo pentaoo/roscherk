@@ -327,7 +327,6 @@ button {
 .search-menu.is-open .search-menu__surface {
   width: var(--search-open-width);
   height: var(--search-open-height);
-  border-color: transparent;
 }
 
 .search-menu.is-closing .search-menu__surface {
@@ -389,6 +388,10 @@ button {
   font-size: 40px;
   font-weight: 350;
   line-height: 1.16;
+}
+
+.search-menu__input:focus-visible {
+  outline: 0;
 }
 
 .search-menu__input::placeholder {
@@ -756,22 +759,13 @@ button {
   0% {
     width: var(--button-hover-width);
     min-width: var(--button-hover-width);
+    padding-right: 52px;
+    padding-left: 52px;
     opacity: 1;
-    transform: scaleX(1.08) scaleY(0.9);
   }
 
-  34% {
-    width: calc(var(--button-width) * 0.72);
-    min-width: calc(var(--button-width) * 0.72);
-    opacity: 1;
-    transform: scaleX(0.82) scaleY(1.14);
-  }
-
-  68% {
-    width: calc(var(--button-width) * 0.22);
-    min-width: calc(var(--button-width) * 0.22);
-    opacity: 0.62;
-    transform: scaleX(0.34) scaleY(1.24);
+  60% {
+    opacity: 0.45;
   }
 
   100% {
@@ -780,14 +774,13 @@ button {
     padding-right: 0;
     padding-left: 0;
     opacity: 0;
-    transform: scaleX(0) scaleY(0.72);
   }
 }
 
 .collection-card__cta.is-click-collapse {
   overflow: hidden;
   pointer-events: none;
-  animation: collection-cta-click-collapse var(--duration-cta-collapse) var(--ease-jelly) forwards;
+  animation: collection-cta-click-collapse var(--duration-cta-collapse) var(--smooth) forwards;
 }
 
 .collection-card.is-animating {
@@ -881,13 +874,13 @@ button {
   width: 100%;
   height: auto;
   min-height: 0;
-  padding: 0 0 64px;
+  padding: 36px;
 }
 
 .collection-card.is-expanded .collection-card__title,
 .collection-card.is-expanding-content.is-expanded .collection-card__title,
 .collection-card.is-collapsing-content.is-expanded .collection-card__title {
-  margin-bottom: 0;
+  margin: 8px;
   padding: 0 30px;
   font-size: 116px;
   line-height: 0.88;
@@ -897,7 +890,7 @@ button {
 .collection-card.is-expanding-content.is-expanded .collection-card__meta,
 .collection-card.is-collapsing-content.is-expanded .collection-card__meta {
   gap: 2px;
-  padding: 0 32px;
+  padding: 0 34px;
   font-size: 14px;
   line-height: 0.92;
 }
@@ -1073,7 +1066,8 @@ button {
 
 .collection-view-open .home-collage,
 .collection-view-closing .home-collage {
-  opacity: 0;
+  z-index: 105;
+  opacity: 1;
   pointer-events: none;
 }
 
