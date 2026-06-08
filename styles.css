@@ -691,9 +691,9 @@ button {
   gap: 24px;
   --button-width: 297px;
   --button-hover-width: 377px;
-  min-width: var(--button-width);
-  width: var(--button-width);
-  height: 144px;
+  min-width: fit-content;
+  width: fit-content;
+  height: fit-content;
   padding: 52px 52px;
   border: 6px solid var(--green-dark);
   border-radius: 72px;
@@ -724,18 +724,20 @@ button {
 }
 
 .collection-card__cta .button-s__icon {
-  width: 40px;
-  height: 40px;
-  flex-basis: 40px;
+  width: 24px;
+  height: 24px;
+  flex-basis: 24px;
   transition: opacity var(--duration-expand-content) var(--smooth);
 }
 
 .collection-card__cta .button-s__icon svg {
-  width: 40px;
-  height: 40px;
+  width: 24px;
+  height: 24px;
 }
 
 .collection-card__cta-label {
+  height: fit-content;
+  padding: 0 12px 4px;
   letter-spacing: -2%;
 }
 
