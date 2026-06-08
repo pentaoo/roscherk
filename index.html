@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sheji</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="home-page">
+      <section class="collection-menu" aria-label="Collections"></section>
+
+      <template id="collection-card-template">
+        <article class="collection-card">
+          <div class="collection-card__expanded-actions">
+            <button
+              class="button button--expanded collection-card__back"
+              type="button"
+            >
+              <span class="button-icon-shell" aria-hidden="true">
+                <svg class="button-icon" viewBox="0 0 24 24" focusable="false">
+                  <path d="M20 12H5M11 6L5 12L11 18" />
+                </svg>
+              </span>
+              Go back
+            </button>
+          </div>
+          <div class="collection-card__content">
+            <p class="collection-card__eyebrow">collection</p>
+            <h2 class="collection-card__title"></h2>
+            <p class="collection-card__meta">
+              drop made by <strong></strong>
+            </p>
+            <p class="collection-card__description"></p>
+            <div class="collection-card__expanded-copy"></div>
+          </div>
+          <button class="collection-card__cta button-s button-s--collection" type="button">
+            <span class="button-s__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M5 16L12 9L19 16" />
+              </svg>
+            </span>
+            <span class="collection-card__cta-label">Check it</span>
+            <span class="button-s__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M5 16L12 9L19 16" />
+              </svg>
+            </span>
+          </button>
+        </article>
+      </template>
+
+      <aside class="home-collage" aria-label="Featured clothes collage">
+        <button class="collage-card collage-card--one" type="button" aria-label="Sunglasses">
+          <img src="assets/clothes/190974504_541699203516699_183373111195965728_n-... 1.png" alt="" />
+        </button>
+        <button class="collage-card collage-card--two" type="button" aria-label="Pants">
+          <img src="assets/clothes/image-as-object 1.png" alt="" />
+        </button>
+        <button class="collage-card collage-card--three" type="button" aria-label="Woven vest">
+          <img src="assets/clothes/kp_woven_vest_blue_1600x-jpg-v-1569996245 1.png" alt="" />
+        </button>
+        <button class="collage-card collage-card--four" type="button" aria-label="Olive jacket">
+          <img src="assets/clothes/217702833_492815288678751_852093036610599298_n-... 1.png" alt="" />
+        </button>
+        <button class="collage-card collage-card--five" type="button" aria-label="Green cap">
+          <img src="assets/clothes/413395-fd3a96ac4c26484e86b07d7bcf1b0b6c-png-q-1... 1.png" alt="" />
+        </button>
+        <button class="collage-card collage-card--six" type="button" aria-label="Orange puffer jacket">
+          <img src="assets/clothes/screenshot-png 1.png" alt="" />
+        </button>
+      </aside>
+
+      <section class="home-actions" aria-label="Home navigation">
+        <button class="button button--shows" type="button">
+          <span>Shows</span>
+        </button>
+
+        <div class="search-menu">
+          <form
+            class="search-menu__surface button button--search"
+            id="home-search-panel"
+            role="search"
+            aria-label="Search"
+            aria-expanded="false"
+          >
+            <div class="search-menu__slot search-menu__slot--idle">
+              <span class="search-menu__prompt">Lemme help you..</span>
+            </div>
+
+            <div
+              class="search-menu__slot search-menu__slot--head search-menu__row"
+            >
+              <input
+                class="search-menu__input"
+                type="search"
+                name="query"
+                placeholder="Shirt"
+                autocomplete="off"
+                tabindex="-1"
+              />
+              <span
+                class="button-icon-shell button-icon-shell--search"
+                aria-hidden="true"
+              >
+                <svg
+                  class="button-icon button-icon--large"
+                  viewBox="0 0 40 40"
+                  focusable="false"
+                >
+                  <path
+                    d="M18 30C24.627 30 30 24.627 30 18C30 11.373 24.627 6 18 6C11.373 6 6 11.373 6 18C6 24.627 11.373 30 18 30Z"
+                  />
+                  <path d="M27 27L34 34" />
+                </svg>
+              </span>
+            </div>
+
+            <div class="search-menu__slot search-menu__slot--body">
+              <div class="search-menu__divider"></div>
+              <button class="search-menu__suggestion" type="button">
+                <span>Lemme help you..</span>
+                <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                  <path d="M9 20H31" />
+                  <path d="M22 11L31 20L22 29" />
+                </svg>
+              </button>
+              <button class="search-menu__suggestion" type="button">
+                <span>Lemme help you..</span>
+                <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                  <path d="M9 20H31" />
+                  <path d="M22 11L31 20L22 29" />
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script src="data/collections.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/collections.js"></script>
+    <script src="js/collage.js"></script>
+    <script src="js/search-menu.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
