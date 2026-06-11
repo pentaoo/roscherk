@@ -15,51 +15,63 @@ const CTA_LABELS = {
   expanded: "Read more",
 };
 
+const COLLECTION_PHASES = {
+  idle: "idle",
+  expandingShell: "expanding-shell",
+  expandingContent: "expanding-content",
+  expanded: "expanded",
+  collapsingContent: "collapsing-content",
+  collapsingShell: "collapsing-shell",
+};
+
 const COLLECTION_MEDIA = [
   {
-    src: "assets/clothes/190974504_541699203516699_183373111195965728_n-... 1.png",
+    src: "assets/clothes/hats/190974504_541699203516699_183373111195965728_n-... 2.png",
     alt: "Sunglasses from the Sheji visual archive",
     caption: "Lookbook crop: polished black lenses against the yellow collection field.",
   },
   {
-    src: "assets/clothes/image-as-object 1.png",
-    alt: "Folded pants from the Sheji visual archive",
-    caption: "Material note: heavy folds, clean seams, and a graphic product silhouette.",
+    src: "assets/clothes/pants/cdg-painter-pants 2.png",
+    alt: "Paint-splattered pants from the Sheji visual archive",
+    caption: "Material note: paint marks, heavy cotton, and a graphic product silhouette.",
   },
   {
-    src: "assets/clothes/kp_woven_vest_blue_1600x-jpg-v-1569996245 1.png",
+    src: "assets/clothes/top/kp_woven_vest_blue_1600x-jpg-v-1569996245 2.png",
     alt: "Blue woven vest from the Sheji visual archive",
     caption: "Surface study: woven blue texture with a compact outerwear shape.",
   },
   {
-    src: "assets/clothes/217702833_492815288678751_852093036610599298_n-... 1.png",
-    alt: "Olive jacket from the Sheji visual archive",
-    caption: "Styling frame: olive shell, oversized volume, and outdoor references.",
+    src: "assets/clothes/top/lightweight-suede-leather-overshirt-chocolate-b... 2.png",
+    alt: "Brown suede overshirt from the Sheji visual archive",
+    caption: "Styling frame: suede shell, oversized volume, and outdoor references.",
   },
   {
-    src: "assets/clothes/413395-fd3a96ac4c26484e86b07d7bcf1b0b6c-png-q-1... 1.png",
-    alt: "Green cap from the Sheji visual archive",
-    caption: "Accessory close-up: saturated green, soft crown, and casual branding.",
+    src: "assets/clothes/hats/217702833_492815288678751_852093036610599298_n-... 2.png",
+    alt: "Green bucket hat from the Sheji visual archive",
+    caption: "Accessory close-up: saturated green, soft crown, and embroidered graphics.",
   },
   {
-    src: "assets/clothes/screenshot-png 1.png",
+    src: "assets/clothes/top/screenshot-png 2.png",
     alt: "Orange puffer jacket from the Sheji visual archive",
     caption: "Drop reference: inflated orange panels and high-contrast street styling.",
   },
 ];
 
 const OVERLAY_OPEN_PHASES = new Set([
-  "expanding-shell",
-  "expanding-content",
-  "expanded",
-  "collapsing-content",
+  COLLECTION_PHASES.expandingShell,
+  COLLECTION_PHASES.expandingContent,
+  COLLECTION_PHASES.expanded,
+  COLLECTION_PHASES.collapsingContent,
 ]);
 
 const FULL_SIZE_PHASES = new Set([
-  "expanding-content",
-  "expanded",
-  "collapsing-content",
+  COLLECTION_PHASES.expandingContent,
+  COLLECTION_PHASES.expanded,
+  COLLECTION_PHASES.collapsingContent,
 ]);
+
+const COLLECTION_WHEEL_THRESHOLD = 8;
+const COLLECTION_WHEEL_LOCK_BUFFER = 260;
 
 function normalizeIndex(index, count) {
   return ((index % count) + count) % count;
@@ -259,21 +271,136 @@ function resetCtaClickCollapse(card) {
   card.querySelector(".collection-card__cta")?.classList.remove("is-click-collapse");
 }
 
-function initCollectionExperience(menu) {
-  const cards = Array.from(menu.querySelectorAll(".collection-card"));
-  if (cards.length === 0) {
-    return;
-  }
-
+function createCollectionViewModel(cardCount) {
   const state = {
-    activeIndex: Math.min(1, cards.length - 1),
-    phase: "idle",
+    activeIndex: Math.min(1, cardCount - 1),
+    phase: COLLECTION_PHASES.idle,
     expandedCard: null,
     isCycling: false,
     isAnimating: false,
     sourceRect: null,
     animationFallback: null,
     pendingPhaseEnd: null,
+    pointerOverStack: false,
+    wheelLockUntil: 0,
+  };
+
+  return {
+    state,
+    beginClose() {
+      if (
+        state.isAnimating ||
+        state.phase !== COLLECTION_PHASES.expanded ||
+        !state.expandedCard ||
+        !state.sourceRect
+      ) {
+        return null;
+      }
+
+      state.isAnimating = true;
+      state.phase = COLLECTION_PHASES.collapsingContent;
+      return state.expandedCard;
+    },
+    beginContentExpand(card) {
+      if (state.phase !== COLLECTION_PHASES.expandingShell) {
+        return false;
+      }
+
+      state.phase = COLLECTION_PHASES.expandingContent;
+      return true;
+    },
+    beginOpen(card, sourceRect) {
+      if (
+        state.isAnimating ||
+        state.phase !== COLLECTION_PHASES.idle ||
+        !card.classList.contains("is-menu-active")
+      ) {
+        return false;
+      }
+
+      state.isAnimating = true;
+      state.expandedCard = card;
+      state.sourceRect = sourceRect;
+      state.phase = COLLECTION_PHASES.expandingShell;
+      return true;
+    },
+    beginShellCollapse() {
+      if (state.phase !== COLLECTION_PHASES.collapsingContent) {
+        return false;
+      }
+
+      state.phase = COLLECTION_PHASES.collapsingShell;
+      return true;
+    },
+    canHandleWheel(now, isOverCollectionCard) {
+      const isLocked = now < state.wheelLockUntil;
+      return state.phase === COLLECTION_PHASES.idle && (isLocked || isOverCollectionCard);
+    },
+    cycleTo(nextIndex) {
+      const normalizedIndex = normalizeIndex(nextIndex, cardCount);
+
+      if (
+        state.isCycling ||
+        state.phase !== COLLECTION_PHASES.idle ||
+        normalizedIndex === state.activeIndex
+      ) {
+        return false;
+      }
+
+      state.isCycling = true;
+      state.activeIndex = normalizedIndex;
+      return true;
+    },
+    finishClose() {
+      if (!state.expandedCard || state.phase !== COLLECTION_PHASES.collapsingShell) {
+        return null;
+      }
+
+      const card = state.expandedCard;
+      state.isAnimating = false;
+      state.phase = COLLECTION_PHASES.idle;
+      state.expandedCard = null;
+      state.sourceRect = null;
+      return card;
+    },
+    finishCycle() {
+      state.isCycling = false;
+    },
+    finishOpen() {
+      state.phase = COLLECTION_PHASES.expanded;
+      state.isAnimating = false;
+    },
+    isBodyClosing() {
+      return state.phase === COLLECTION_PHASES.collapsingShell;
+    },
+    isBodyOpen() {
+      return OVERLAY_OPEN_PHASES.has(state.phase);
+    },
+    isFullSize() {
+      return FULL_SIZE_PHASES.has(state.phase);
+    },
+    lockWheel(duration) {
+      state.wheelLockUntil = window.performance.now() + duration + COLLECTION_WHEEL_LOCK_BUFFER;
+    },
+    setPointerOverStack(value) {
+      state.pointerOverStack = value;
+    },
+  };
+}
+
+function initCollectionExperience(menu) {
+  const cards = Array.from(menu.querySelectorAll(".collection-card"));
+  if (cards.length === 0) {
+    return;
+  }
+
+  const viewModel = createCollectionViewModel(cards.length);
+  const { state } = viewModel;
+  const mobileCollectionQuery = window.matchMedia("(max-width: 767px), (pointer: coarse)");
+  const swipeState = {
+    pointerId: null,
+    startX: 0,
+    startY: 0,
   };
 
   const cycleDuration = () => window.ShejiMotion.durationMs("--duration-menu-cycle");
@@ -283,20 +410,13 @@ function initCollectionExperience(menu) {
   const contentBuffer = () => window.ShejiMotion.durationMs("--duration-expand-content-buffer");
 
   const applyViewPhase = () => {
-    document.body.classList.toggle("collection-view-open", OVERLAY_OPEN_PHASES.has(state.phase));
-    document.body.classList.toggle("collection-view-closing", state.phase === "collapsing-shell");
+    document.body.classList.toggle("collection-view-open", viewModel.isBodyOpen());
+    document.body.classList.toggle("collection-view-closing", viewModel.isBodyClosing());
   };
 
   const applySlots = () => {
     applyCardSlots(cards, getCardSlots(state.activeIndex, cards.length));
-    window.dispatchEvent(
-      new CustomEvent("sheji:collectionchange", {
-        detail: {
-          activeIndex: state.activeIndex,
-          collection: window.SHEJI_COLLECTIONS?.[state.activeIndex] || null,
-        },
-      }),
-    );
+    window.ShejiRuntime.emitCollectionChange(state.activeIndex);
   };
 
   const clearAnimationTimer = () => {
@@ -320,17 +440,13 @@ function initCollectionExperience(menu) {
   };
 
   const finishClose = () => {
-    if (!state.expandedCard || state.phase !== "collapsing-shell") {
+    const card = viewModel.finishClose();
+    if (!card) {
       return;
     }
 
-    const card = state.expandedCard;
     resetCtaClickCollapse(card);
     clearAnimationTimer();
-    state.isAnimating = false;
-    state.phase = "idle";
-    state.expandedCard = null;
-    state.sourceRect = null;
 
     card.classList.add("is-restoring-menu");
     card.classList.remove(
@@ -349,17 +465,15 @@ function initCollectionExperience(menu) {
 
   const finishOpen = (card) => {
     clearAnimationTimer();
-    state.phase = "expanded";
-    state.isAnimating = false;
+    viewModel.finishOpen();
     card.classList.remove("is-animating", "is-expanding-content");
   };
 
   const beginContentExpand = (card) => {
-    if (state.phase !== "expanding-shell") {
+    if (!viewModel.beginContentExpand(card)) {
       return;
     }
 
-    state.phase = "expanding-content";
     card.classList.add("is-expanding-content");
     commitCardGeometry(card);
 
@@ -369,17 +483,16 @@ function initCollectionExperience(menu) {
       replayCtaHover(card);
     });
 
-    schedulePhaseEnd("expanding-content", contentDuration() + contentBuffer(), () => {
+    schedulePhaseEnd(COLLECTION_PHASES.expandingContent, contentDuration() + contentBuffer(), () => {
       finishOpen(card);
     });
   };
 
   const beginShellCollapse = (card) => {
-    if (state.phase !== "collapsing-content") {
+    if (!viewModel.beginShellCollapse()) {
       return;
     }
 
-    state.phase = "collapsing-shell";
     applyViewPhase();
     card.classList.remove("is-expanded");
     setExpandedGeometry(card);
@@ -390,7 +503,7 @@ function initCollectionExperience(menu) {
       setCardGeometry(card, state.sourceRect);
     });
 
-    schedulePhaseEnd("collapsing-shell", shellDuration() + shellBuffer(), () => {
+    schedulePhaseEnd(COLLECTION_PHASES.collapsingShell, shellDuration() + shellBuffer(), () => {
       finishClose();
     });
   };
@@ -400,29 +513,27 @@ function initCollectionExperience(menu) {
       return;
     }
 
-    if (state.pendingPhaseEnd === "expanding-shell") {
+    if (state.pendingPhaseEnd === COLLECTION_PHASES.expandingShell) {
       clearAnimationTimer();
       beginContentExpand(card);
       return;
     }
 
-    if (state.pendingPhaseEnd === "collapsing-shell") {
+    if (state.pendingPhaseEnd === COLLECTION_PHASES.collapsingShell) {
       clearAnimationTimer();
       finishClose();
     }
   };
 
   const cycleTo = (nextIndex) => {
-    if (state.isCycling || state.phase !== "idle" || nextIndex === state.activeIndex) {
+    if (!viewModel.cycleTo(nextIndex)) {
       return;
     }
 
-    state.isCycling = true;
-    state.activeIndex = normalizeIndex(nextIndex, cards.length);
     applySlots();
 
     window.setTimeout(() => {
-      state.isCycling = false;
+      viewModel.finishCycle();
     }, cycleDuration());
   };
 
@@ -431,30 +542,95 @@ function initCollectionExperience(menu) {
     cycleTo(normalizeIndex(state.activeIndex + direction, cards.length));
   };
 
+  const resetSwipeState = () => {
+    swipeState.pointerId = null;
+    swipeState.startX = 0;
+    swipeState.startY = 0;
+  };
+
+  const handleSwipeStart = (event) => {
+    if (!mobileCollectionQuery.matches || state.phase !== COLLECTION_PHASES.idle) {
+      return;
+    }
+
+    swipeState.pointerId = event.pointerId;
+    swipeState.startX = event.clientX;
+    swipeState.startY = event.clientY;
+  };
+
+  const handleSwipeEnd = (event) => {
+    if (swipeState.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const deltaX = event.clientX - swipeState.startX;
+    const deltaY = event.clientY - swipeState.startY;
+    resetSwipeState();
+
+    if (Math.abs(deltaX) < 44 || Math.abs(deltaX) < Math.abs(deltaY) * 1.35) {
+      return;
+    }
+
+    event.preventDefault();
+    cycleTo(normalizeIndex(state.activeIndex + (deltaX < 0 ? 1 : -1), cards.length));
+  };
+
+  const isEventTargetInCollection = (event) =>
+    event.target instanceof Element &&
+    Boolean(event.target.closest(".collection-menu, .collection-card"));
+
+  const isPointOverVisibleCard = (event) =>
+    cards.some((card) => {
+      if (card.getAttribute("aria-hidden") === "true" || !card.matches(".collection-card")) {
+        return false;
+      }
+
+      const rect = card.getBoundingClientRect();
+      return (
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom
+      );
+    });
+
+  const handleCollectionWheel = (event) => {
+    const now = window.performance.now();
+    const isOverCollectionCard =
+      state.pointerOverStack || isEventTargetInCollection(event) || isPointOverVisibleCard(event);
+
+    if (!viewModel.canHandleWheel(now, isOverCollectionCard)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!isOverCollectionCard || Math.abs(event.deltaY) < COLLECTION_WHEEL_THRESHOLD) {
+      return;
+    }
+
+    viewModel.lockWheel(cycleDuration());
+    cycleByScroll(event.deltaY);
+  };
+
   const openCard = (card) => {
-    if (
-      state.isAnimating ||
-      state.phase !== "idle" ||
-      !card.classList.contains("is-menu-active")
-    ) {
+    const sourceRect = card.getBoundingClientRect();
+    if (!viewModel.beginOpen(card, sourceRect)) {
       return false;
     }
 
-    state.isAnimating = true;
-    state.expandedCard = card;
-    state.sourceRect = card.getBoundingClientRect();
     setCardGeometry(card, state.sourceRect);
     card.classList.add("is-animating");
     commitCardGeometry(card);
 
-    state.phase = "expanding-shell";
     applyViewPhase();
 
     requestAnimationFrame(() => {
       setExpandedGeometry(card);
     });
 
-    schedulePhaseEnd("expanding-shell", shellDuration() + shellBuffer(), () => {
+    schedulePhaseEnd(COLLECTION_PHASES.expandingShell, shellDuration() + shellBuffer(), () => {
       beginContentExpand(card);
     });
 
@@ -462,18 +638,11 @@ function initCollectionExperience(menu) {
   };
 
   const closeCard = () => {
-    if (
-      state.isAnimating ||
-      state.phase !== "expanded" ||
-      !state.expandedCard ||
-      !state.sourceRect
-    ) {
+    const card = viewModel.beginClose();
+    if (!card) {
       return;
     }
 
-    const card = state.expandedCard;
-    state.isAnimating = true;
-    state.phase = "collapsing-content";
     card.classList.add("is-animating", "is-collapsing-content");
     commitCardGeometry(card);
 
@@ -484,7 +653,7 @@ function initCollectionExperience(menu) {
       replayCtaHover(card);
     });
 
-    schedulePhaseEnd("collapsing-content", contentDuration() + contentBuffer(), () => {
+    schedulePhaseEnd(COLLECTION_PHASES.collapsingContent, contentDuration() + contentBuffer(), () => {
       beginShellCollapse(card);
     });
   };
@@ -494,11 +663,19 @@ function initCollectionExperience(menu) {
       handleShellTransitionEnd(card, event);
     });
 
+    card.addEventListener("pointerenter", () => {
+      viewModel.setPointerOverStack(true);
+    });
+
+    card.addEventListener("pointerleave", () => {
+      viewModel.setPointerOverStack(false);
+    });
+
     card.querySelector(".collection-card__cta")?.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
 
-      if (state.phase === "idle" && openCard(card)) {
+      if (state.phase === COLLECTION_PHASES.idle && openCard(card)) {
         playCtaClickCollapse(event.currentTarget);
       }
     });
@@ -510,7 +687,7 @@ function initCollectionExperience(menu) {
 
     card.addEventListener("click", (event) => {
       if (
-        state.phase !== "idle" ||
+        state.phase !== COLLECTION_PHASES.idle ||
         index === state.activeIndex ||
         event.target.closest(".collection-card__cta") ||
         event.target.closest(".collection-card__back")
@@ -528,21 +705,17 @@ function initCollectionExperience(menu) {
     });
   });
 
-  menu.addEventListener(
-    "wheel",
-    (event) => {
-      if (Math.abs(event.deltaY) < 8) {
-        return;
-      }
+  window.addEventListener("wheel", handleCollectionWheel, {
+    passive: false,
+    capture: true,
+  });
 
-      event.preventDefault();
-      cycleByScroll(event.deltaY);
-    },
-    { passive: false },
-  );
+  menu.addEventListener("pointerdown", handleSwipeStart);
+  menu.addEventListener("pointerup", handleSwipeEnd);
+  menu.addEventListener("pointercancel", resetSwipeState);
 
   window.addEventListener("resize", () => {
-    if (!state.expandedCard || !FULL_SIZE_PHASES.has(state.phase)) {
+    if (!state.expandedCard || !viewModel.isFullSize()) {
       return;
     }
 
@@ -553,6 +726,7 @@ function initCollectionExperience(menu) {
 }
 
 window.ShejiCollections = {
+  createCollectionViewModel,
   getCardSlots,
   renderCollectionCards,
   initCollectionExperience,

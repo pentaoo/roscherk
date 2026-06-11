@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sheji Product</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="product-page">
+    <main class="product-page__main">
+      <section
+        class="product-detail"
+        id="product-detail"
+        aria-labelledby="product-detail-title"
+        data-product-detail
+      >
+        <div class="product-detail__toolbar">
+          <a class="product-detail__back" href="index.html#catalogue">
+            <img src="source/icons/west.svg" alt="" />
+            <span>Go back</span>
+          </a>
+        </div>
+
+        <div class="cart-status-menu product-detail__cart-status">
+          <a
+            class="cart-status"
+            href="cart.html"
+            aria-label="Open cart, 0 items"
+            aria-expanded="false"
+          >
+            <img src="source/icons/shopping_cart.svg" alt="" />
+            <span class="cart-status__label">Cart</span>
+            <span class="cart-status__count" data-cart-count>0</span>
+          </a>
+        </div>
+
+        <div class="product-detail__stage">
+          <button
+            class="product-detail__nav product-detail__nav--prev"
+            type="button"
+            aria-label="Previous product"
+            data-product-prev
+          >
+            <img src="source/icons/keyboard_arrow_left.svg" alt="" />
+          </button>
+
+          <article class="product-detail__product" aria-live="polite">
+            <h1 class="visually-hidden" id="product-detail-title" data-product-title>
+              Product detail
+            </h1>
+            <img class="product-detail__image" alt="" data-product-image />
+          </article>
+
+          <button
+            class="product-detail__nav product-detail__nav--next"
+            type="button"
+            aria-label="Next product"
+            data-product-next
+          >
+            <img src="source/icons/keyboard_arrow_right.svg" alt="" />
+          </button>
+        </div>
+
+        <div class="product-detail__purchase">
+          <div class="product-detail__size-selector size-selector" data-size-selector>
+            <button
+              class="size-selector__trigger"
+              type="button"
+              data-size-trigger
+              aria-expanded="false"
+            >
+              <span data-size-label>Size</span>
+            </button>
+          </div>
+
+          <button class="product-detail__add" type="button" data-product-add>
+            <img src="source/icons/add.svg" alt="" />
+            <span>Add to cart</span>
+          </button>
+        </div>
+
+        <div
+          class="product-detail__recommendations"
+          aria-label="Recommended products"
+          data-product-recommendations
+        ></div>
+      </section>
+    </main>
+
+    <script src="data/collections.js"></script>
+    <script src="data/products.js"></script>
+    <script src="js/merchandising.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/runtime.js"></script>
+    <script src="js/collections.js"></script>
+    <script src="js/catalogue.js"></script>
+    <script src="js/product-detail.js"></script>
+    <script src="js/collage.js"></script>
+    <script src="js/search-menu.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

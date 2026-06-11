@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sheji Shows</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="show-page">
+    <main class="show-page__main">
+      <section
+        class="show-detail"
+        aria-labelledby="show-detail-title"
+        data-show-detail
+      >
+        <div class="show-detail__toolbar">
+          <a class="show-detail__back" href="index.html#top">
+            <img src="source/icons/west.svg" alt="" />
+            <span>Go back</span>
+          </a>
+        </div>
+
+        <article class="show-detail__body">
+          <div class="show-detail__copy">
+            <p class="show-detail__eyebrow">latest show</p>
+            <h1 id="show-detail-title" data-show-title>Shows</h1>
+            <dl class="show-detail__meta">
+              <div>
+                <dt>Date</dt>
+                <dd data-show-date></dd>
+              </div>
+              <div>
+                <dt>Venue</dt>
+                <dd data-show-venue></dd>
+              </div>
+              <div>
+                <dt>City</dt>
+                <dd data-show-city></dd>
+              </div>
+            </dl>
+            <p class="show-detail__summary" data-show-summary></p>
+            <div class="show-detail__details" data-show-details></div>
+          </div>
+
+          <div class="show-detail__hero-photo" aria-hidden="true"></div>
+        </article>
+
+        <section
+          class="show-detail__gallery"
+          aria-label="Event photos"
+          data-show-gallery
+        ></section>
+      </section>
+    </main>
+
+    <script src="data/collections.js"></script>
+    <script src="data/products.js"></script>
+    <script src="data/events.js"></script>
+    <script src="js/merchandising.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/runtime.js"></script>
+    <script src="js/collections.js"></script>
+    <script src="js/catalogue.js"></script>
+    <script src="js/product-detail.js"></script>
+    <script src="js/collage.js"></script>
+    <script src="js/search-menu.js"></script>
+    <script src="js/shows.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
