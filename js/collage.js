@@ -157,6 +157,35 @@ function settleEntryState(item) {
   item.style.setProperty("--entry-opacity", "1");
 }
 
+function waitForAnimationFrame() {
+  return new Promise((resolve) => {
+    window.requestAnimationFrame(resolve);
+  });
+}
+
+function waitForImageDecode(image) {
+  if (!image) {
+    return Promise.resolve();
+  }
+
+  if (typeof image.decode === "function") {
+    return image.decode().catch(() => {});
+  }
+
+  if (image.complete) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    image.addEventListener("load", resolve, { once: true });
+    image.addEventListener("error", resolve, { once: true });
+  });
+}
+
+function waitForLookImages(nodes) {
+  return Promise.all(nodes.map((node) => waitForImageDecode(node.querySelector("img"))));
+}
+
 function createLookItem({ product, desktop, mobile, parallax }, index, state) {
   const item = document.createElement("a");
   item.className = "collage-card look-item";
@@ -174,7 +203,13 @@ function createLookItem({ product, desktop, mobile, parallax }, index, state) {
   const image = document.createElement("img");
   image.src = product.image;
   image.alt = product.alt;
+  image.loading = "eager";
+  image.decoding = "async";
   image.draggable = false;
+
+  if ("fetchPriority" in image) {
+    image.fetchPriority = index < 3 ? "high" : "auto";
+  }
 
   item.append(image, createLookInfo(product));
 
@@ -305,7 +340,10 @@ function initHomeCollage(collage) {
     stage.replaceChildren(...nodes);
     resetCursor();
 
-    window.requestAnimationFrame(() => {
+    waitForLookImages(nodes).then(async () => {
+      await waitForAnimationFrame();
+      await waitForAnimationFrame();
+
       if (state.generation !== generation) {
         return;
       }
