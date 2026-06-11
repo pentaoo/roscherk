@@ -134,6 +134,11 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
       writeStoredCart(cart);
       notify({ type: "cart", productId });
     },
+    clearCart() {
+      cart.clear();
+      writeStoredCart(cart);
+      notify({ type: "cart" });
+    },
     getActiveFilter(group) {
       return filters[group] || null;
     },
@@ -166,6 +171,9 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
       });
 
       return [...rows.values()];
+    },
+    getCartQuantity(productId) {
+      return cart.get(productId) || 0;
     },
     getCartTotal() {
       return this.getCartRows().reduce((sum, row) => sum + row.lineTotal, 0);
@@ -233,6 +241,22 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
     setSearch(value) {
       state.search = value;
       notify({ type: "search", value });
+    },
+    setCartQuantity(productId, quantity) {
+      if (!getProduct(productId)) {
+        return;
+      }
+
+      const nextQuantity = Math.max(0, Math.floor(Number(quantity) || 0));
+
+      if (nextQuantity === 0) {
+        cart.delete(productId);
+      } else {
+        cart.set(productId, nextQuantity);
+      }
+
+      writeStoredCart(cart);
+      notify({ type: "cart", productId });
     },
     subscribe(subscriber) {
       subscribers.add(subscriber);
@@ -576,5 +600,6 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
 
 window.ShejiCatalogue = {
   createCatalogueCommerce,
+  formatPrice,
   initCatalogue,
 };
