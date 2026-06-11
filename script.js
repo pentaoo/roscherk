@@ -42,6 +42,10 @@ function initCatalogueJumpLink() {
 
   document.querySelectorAll('.catalogue__back[href="#top"]').forEach((backLink) => {
     backLink.addEventListener("click", (event) => {
+      if (backLink.closest(".catalogue")?.classList.contains("is-collection-filtered")) {
+        return;
+      }
+
       event.preventDefault();
 
       topTarget.scrollIntoView({

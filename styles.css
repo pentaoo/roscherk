@@ -521,7 +521,6 @@ button {
 .search-menu__slot--body {
   display: none;
   width: 100%;
-  min-height: 0;
   flex-direction: column;
   gap: 46px;
 }
@@ -576,7 +575,6 @@ button {
 .search-menu.is-open .search-menu__surface {
   width: var(--search-open-width);
   height: var(--search-open-height);
-  max-height: calc(100vh - 16px);
 }
 
 .search-menu.is-closing .search-menu__surface {
@@ -608,16 +606,6 @@ button {
 .search-menu.is-open .search-menu__slot--body,
 .search-menu.is-closing .search-menu__slot--body {
   display: flex;
-}
-
-.search-menu.is-open .search-menu__slot--body {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding-right: 8px;
-  scrollbar-gutter: stable;
 }
 
 .search-menu.is-open .search-menu__slot--body > * {
@@ -1593,27 +1581,8 @@ button {
 
 .catalogue__controls {
   position: relative;
-  max-width: calc(100vw - 16px);
   justify-content: flex-end;
   gap: 2px;
-  overflow: visible;
-}
-
-.catalogue__controls:has(.filter-control.is-open):not(:has(.search-menu.is-open)) {
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-inline: contain;
-  scrollbar-gutter: stable;
-  scrollbar-width: thin;
-}
-
-.catalogue__controls:has(.filter-control.is-open):not(:has(.search-menu.is-open))::-webkit-scrollbar {
-  height: 8px;
-}
-
-.catalogue__controls:has(.filter-control.is-open):not(:has(.search-menu.is-open))::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: var(--green-dark);
 }
 
 .filter-control {

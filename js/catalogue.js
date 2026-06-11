@@ -121,7 +121,17 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
   };
 
   const state = {
+    activeCollection: null,
+    activeCollectionId: null,
     search: "",
+  };
+
+  const productMatchesCollection = (product) => {
+    if (!state.activeCollectionId) {
+      return true;
+    }
+
+    return product.collectionId === state.activeCollectionId;
   };
 
   return {
@@ -198,6 +208,9 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
     getFilters() {
       return { ...filters };
     },
+    getActiveCollection() {
+      return state.activeCollection;
+    },
     getProduct(productId) {
       return getProduct(productId);
     },
@@ -228,7 +241,10 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
     },
     getVisibleProducts() {
       return products.filter(
-        (product) => productMatchesFilters(product) && productMatchesSearch(product, state.search),
+        (product) =>
+          productMatchesCollection(product) &&
+          productMatchesFilters(product) &&
+          productMatchesSearch(product, state.search),
       );
     },
     isFavorite(productId) {
@@ -237,6 +253,11 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
     setFilter(group, value) {
       filters[group] = filters[group] === value ? null : value;
       notify({ type: "filter", group, value: filters[group] });
+    },
+    setActiveCollection(collection) {
+      state.activeCollection = collection || null;
+      state.activeCollectionId = collection?.id || null;
+      notify({ type: "collection", collection: state.activeCollection });
     },
     setSearch(value) {
       state.search = value;
@@ -444,10 +465,20 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
   const cartCount = cartButton?.querySelector("[data-cart-count]") || catalogue.querySelector("[data-cart-count]");
   const controls = catalogue.querySelector(".catalogue__controls");
   const cartMenu = cartButton?.closest(".cart-status-menu");
+  const backLink = catalogue.querySelector(".catalogue__back");
+  const headingTitle = catalogue.querySelector(".catalogue__heading h1");
+  const headingMeta = catalogue.querySelector(".catalogue__heading p");
 
   if (!grid) {
     return;
   }
+
+  const defaultHeading = {
+    title: headingTitle?.textContent || "All Clothing",
+    metaText: "drop curated by",
+    metaMark: "SHEJI",
+    backLabel: backLink?.getAttribute("aria-label") || "Back to top",
+  };
 
   const cartPopover = document.createElement("div");
   cartPopover.className = "cart-popover";
@@ -488,6 +519,31 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
     renderCartPopover(cartPopover, commerce.getCartRows(), commerce.getCartTotal());
   };
 
+  const updateHeading = () => {
+    const activeCollection = commerce.getActiveCollection?.() || null;
+
+    catalogue.classList.toggle("is-collection-filtered", Boolean(activeCollection));
+
+    if (headingTitle) {
+      headingTitle.textContent = activeCollection?.title || defaultHeading.title;
+    }
+
+    if (headingMeta) {
+      const mark = document.createElement("mark");
+      mark.textContent = activeCollection?.designer || defaultHeading.metaMark;
+
+      headingMeta.replaceChildren(
+        document.createTextNode(`${activeCollection ? "drop made by" : defaultHeading.metaText} `),
+        mark,
+      );
+    }
+
+    backLink?.setAttribute(
+      "aria-label",
+      activeCollection ? "Back to all clothing" : defaultHeading.backLabel,
+    );
+  };
+
   commerce.subscribe?.((change) => {
     if (change.type === "cart") {
       updateCart();
@@ -517,8 +573,25 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
     }
 
     updateFilterControls();
+    updateHeading();
     updateCart();
   };
+
+  window.ShejiRuntime?.onCollectionSelect?.(({ collection }) => {
+    commerce.setActiveCollection(collection || null);
+    render();
+  });
+
+  backLink?.addEventListener("click", (event) => {
+    if (!commerce.getActiveCollection?.()) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    commerce.setActiveCollection(null);
+    render();
+  });
 
   filterControls.forEach((control) => {
     const trigger = control.querySelector("[data-filter-trigger]");

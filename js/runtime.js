@@ -1,5 +1,6 @@
 const SHEJI_EVENTS = {
   collectionChange: "sheji:collectionchange",
+  collectionSelect: "sheji:collectionselect",
 };
 
 function getMerchandisingData() {
@@ -32,11 +33,32 @@ function emitCollectionChange(activeIndex) {
   );
 }
 
+function emitCollectionSelect(activeIndex) {
+  const merchandising = getMerchandisingData();
+
+  window.dispatchEvent(
+    new CustomEvent(SHEJI_EVENTS.collectionSelect, {
+      detail: {
+        activeIndex,
+        collection: merchandising.getCollectionByIndex(activeIndex),
+      },
+    }),
+  );
+}
+
 function onCollectionChange(callback) {
   const listener = (event) => callback(event.detail || {});
   window.addEventListener(SHEJI_EVENTS.collectionChange, listener);
   return () => {
     window.removeEventListener(SHEJI_EVENTS.collectionChange, listener);
+  };
+}
+
+function onCollectionSelect(callback) {
+  const listener = (event) => callback(event.detail || {});
+  window.addEventListener(SHEJI_EVENTS.collectionSelect, listener);
+  return () => {
+    window.removeEventListener(SHEJI_EVENTS.collectionSelect, listener);
   };
 }
 
@@ -47,7 +69,9 @@ function init() {
 window.ShejiRuntime = {
   events: SHEJI_EVENTS,
   emitCollectionChange,
+  emitCollectionSelect,
   getMerchandisingData,
   init,
   onCollectionChange,
+  onCollectionSelect,
 };

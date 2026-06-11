@@ -537,6 +537,10 @@ function initCollectionExperience(menu) {
     }, cycleDuration());
   };
 
+  const selectCollection = (index = state.activeIndex) => {
+    window.ShejiRuntime.emitCollectionSelect(index);
+  };
+
   const cycleByScroll = (deltaY) => {
     const direction = deltaY > 0 ? 1 : -1;
     cycleTo(normalizeIndex(state.activeIndex + direction, cards.length));
@@ -676,6 +680,7 @@ function initCollectionExperience(menu) {
       event.stopPropagation();
 
       if (state.phase === COLLECTION_PHASES.idle && openCard(card)) {
+        selectCollection(index);
         playCtaClickCollapse(event.currentTarget);
       }
     });
@@ -688,10 +693,14 @@ function initCollectionExperience(menu) {
     card.addEventListener("click", (event) => {
       if (
         state.phase !== COLLECTION_PHASES.idle ||
-        index === state.activeIndex ||
         event.target.closest(".collection-card__cta") ||
         event.target.closest(".collection-card__back")
       ) {
+        return;
+      }
+
+      if (index === state.activeIndex) {
+        selectCollection(index);
         return;
       }
 
@@ -701,6 +710,7 @@ function initCollectionExperience(menu) {
 
       if (isNeighbor) {
         cycleTo(index);
+        selectCollection(index);
       }
     });
   });
