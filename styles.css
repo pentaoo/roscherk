@@ -5118,7 +5118,7 @@ html[lang="ru"] .filter-control--colour .filter-control__option {
 
   .cart-item__controls {
     grid-column: 1 / -1;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr);
     min-width: 0;
     align-items: center;
     justify-items: start;
@@ -5148,12 +5148,14 @@ html[lang="ru"] .filter-control--colour .filter-control__option {
   }
 
   .cart-item__price {
-    justify-self: center;
+    justify-self: end;
     font-size: 30px;
   }
 
   .cart-item__remove {
-    justify-self: end;
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-self: stretch;
   }
 
   .cart-detail__footer {
