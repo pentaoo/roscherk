@@ -1,7 +1,8 @@
 const productDetailInstances = new Set();
 
 function getProductDisplayName(product) {
-  return [product.collection, product.name].filter(Boolean).join(" ");
+  return window.ShejiI18n?.productDisplayName?.(product) ||
+    [product.collection, product.name].filter(Boolean).join(" ");
 }
 
 function getProductList(commerce) {
@@ -35,11 +36,15 @@ function createRecommendationCard(product, selectedProductId) {
   card.dataset.recommendedProduct = product.id;
   card.dataset.tone = product.imageTone || "object";
   card.classList.toggle("is-active", product.id === selectedProductId);
-  card.setAttribute("aria-label", `View ${getProductDisplayName(product)}`);
+  card.setAttribute(
+    "aria-label",
+    window.ShejiI18n?.t?.("product.view", { name: getProductDisplayName(product) }) ||
+      `View ${getProductDisplayName(product)}`,
+  );
 
   const image = document.createElement("img");
   image.src = product.image;
-  image.alt = product.alt;
+  image.alt = window.ShejiI18n?.productField?.(product, "alt") || product.alt;
   image.loading = "lazy";
 
   card.append(image);
@@ -143,13 +148,19 @@ function initProductDetail(detail, commerce) {
       title.textContent = productName;
     }
 
-    document.title = `${productName} - Sheji`;
+    document.title =
+      window.ShejiI18n?.t?.("page.productTitleWithName", { name: productName }) ||
+      `${productName} - Sheji`;
 
     image.src = selectedProduct.image;
-    image.alt = selectedProduct.alt;
+    image.alt = window.ShejiI18n?.productField?.(selectedProduct, "alt") || selectedProduct.alt;
     addButton.dataset.productId = selectedProduct.id;
     addButton.dataset.selectedSize = selectedSize || "";
-    addButton.setAttribute("aria-label", `Add ${productName} to cart`);
+    addButton.setAttribute(
+      "aria-label",
+      window.ShejiI18n?.t?.("product.addNamedToCart", { name: productName }) ||
+        `Add ${productName} to cart`,
+    );
 
     recommendations.innerHTML = "";
     recommendedProducts.forEach((product) => {
@@ -159,6 +170,10 @@ function initProductDetail(detail, commerce) {
 
   const updateCartStatus = () => {
     const cartTotal = commerce?.getCartCount?.() || 0;
+    const formattedCartItems =
+      window.ShejiI18n?.formatCartItemCount?.(cartTotal) ||
+      `${cartTotal} ${cartTotal === 1 ? "item" : "items"}`;
+    const cartItems = formattedCartItems.replace(`${cartTotal} `, "");
 
     if (cartCount) {
       cartCount.textContent = String(cartTotal);
@@ -166,7 +181,8 @@ function initProductDetail(detail, commerce) {
 
     cartButton?.setAttribute(
       "aria-label",
-      `Open cart, ${cartTotal} ${cartTotal === 1 ? "item" : "items"}`,
+      window.ShejiI18n?.t?.("cart.open", { count: cartTotal, items: cartItems }) ||
+        `Open cart, ${cartTotal} ${cartTotal === 1 ? "item" : "items"}`,
     );
   };
 
@@ -195,6 +211,11 @@ function initProductDetail(detail, commerce) {
     if (change.type === "cart") {
       updateCartStatus();
     }
+  });
+
+  window.ShejiI18n?.onChange?.(() => {
+    render();
+    updateCartStatus();
   });
 
   sizeTrigger?.addEventListener("click", () => {

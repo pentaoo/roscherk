@@ -13,14 +13,16 @@
   const footer = root.querySelector("[data-cart-footer]");
   const summary = root.querySelector("[data-cart-summary]");
   const total = root.querySelector("[data-cart-total]");
-  const formatPrice = window.ShejiCatalogue.formatPrice || ((price) => `${price}$`);
+  const formatPrice = window.ShejiCatalogue.formatPrice || window.ShejiI18n?.formatPrice || ((price) => `${price}$`);
 
   function getProductName(product) {
-    return [product.collection, product.name].filter(Boolean).join(" ");
+    return window.ShejiI18n?.productDisplayName?.(product) ||
+      [product.collection, product.name].filter(Boolean).join(" ");
   }
 
   function getItemLabel(count) {
-    return `${count} ${count === 1 ? "item" : "items"}`;
+    return window.ShejiI18n?.formatCartItemCount?.(count) ||
+      `${count} ${count === 1 ? "item" : "items"}`;
   }
 
   function createQuantityButton(action, productId, label, text) {
@@ -45,7 +47,7 @@
 
     const image = document.createElement("img");
     image.src = product.image;
-    image.alt = product.alt;
+    image.alt = window.ShejiI18n?.productField?.(product, "alt") || product.alt;
     image.loading = "lazy";
     imageLink.append(image);
 
@@ -54,7 +56,9 @@
 
     const eyebrow = document.createElement("p");
     eyebrow.className = "cart-item__eyebrow";
-    eyebrow.textContent = product.collection;
+    eyebrow.textContent = product.collectionRecord
+      ? window.ShejiI18n?.collectionTitle?.(product.collectionRecord) || product.collection
+      : window.ShejiI18n?.collectionTitle?.(product.collection) || product.collection;
 
     const title = document.createElement("h2");
     title.className = "cart-item__title";
@@ -62,7 +66,11 @@
 
     const meta = document.createElement("p");
     meta.className = "cart-item__meta";
-    meta.textContent = `${product.colour} / ${product.sizes.join(", ")}`;
+    meta.textContent =
+      window.ShejiI18n?.t?.("cart.itemMeta", {
+        colour: window.ShejiI18n?.translateColour?.(product.colour) || product.colour,
+        sizes: product.sizes.join(", "),
+      }) || `${product.colour} / ${product.sizes.join(", ")}`;
 
     copy.append(eyebrow, title, meta);
 
@@ -72,7 +80,13 @@
     const quantityControl = document.createElement("div");
     quantityControl.className = "cart-item__quantity";
     quantityControl.append(
-      createQuantityButton("decrement", product.id, `Remove one ${getProductName(product)}`, "-"),
+      createQuantityButton(
+        "decrement",
+        product.id,
+        window.ShejiI18n?.t?.("cart.removeOne", { name: getProductName(product) }) ||
+          `Remove one ${getProductName(product)}`,
+        "-",
+      ),
     );
 
     const quantityValue = document.createElement("span");
@@ -80,7 +94,13 @@
     quantityValue.textContent = String(quantity);
     quantityControl.append(
       quantityValue,
-      createQuantityButton("increment", product.id, `Add one ${getProductName(product)}`, "+"),
+      createQuantityButton(
+        "increment",
+        product.id,
+        window.ShejiI18n?.t?.("cart.addOne", { name: getProductName(product) }) ||
+          `Add one ${getProductName(product)}`,
+        "+",
+      ),
     );
 
     const price = document.createElement("strong");
@@ -92,7 +112,7 @@
     remove.type = "button";
     remove.dataset.cartAction = "remove";
     remove.dataset.productId = product.id;
-    remove.textContent = "Remove";
+    remove.textContent = window.ShejiI18n?.t?.("cart.remove") || "Remove";
 
     controls.append(quantityControl, price, remove);
     row.append(imageLink, copy, controls);
@@ -151,5 +171,6 @@
   });
 
   commerce.subscribe(render);
+  window.ShejiI18n?.onChange?.(render);
   render();
 })();

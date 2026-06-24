@@ -10,9 +10,9 @@ const STACK_CLASS_MAP = {
   below: "is-hidden-below",
 };
 
-const CTA_LABELS = {
-  collapsed: "Check it",
-  expanded: "Read more",
+const CTA_LABEL_KEYS = {
+  collapsed: "collection.checkIt",
+  expanded: "collection.readMore",
 };
 
 const COLLECTION_PHASES = {
@@ -26,31 +26,37 @@ const COLLECTION_PHASES = {
 
 const COLLECTION_MEDIA = [
   {
+    key: "sunglasses",
     src: "assets/clothes/hats/190974504_541699203516699_183373111195965728_n-... 2.png",
     alt: "Sunglasses from the Sheji visual archive",
     caption: "Lookbook crop: polished black lenses against the yellow collection field.",
   },
   {
+    key: "painterPants",
     src: "assets/clothes/pants/cdg-painter-pants 2.png",
     alt: "Paint-splattered pants from the Sheji visual archive",
     caption: "Material note: paint marks, heavy cotton, and a graphic product silhouette.",
   },
   {
+    key: "wovenVest",
     src: "assets/clothes/top/kp_woven_vest_blue_1600x-jpg-v-1569996245 2.png",
     alt: "Blue woven vest from the Sheji visual archive",
     caption: "Surface study: woven blue texture with a compact outerwear shape.",
   },
   {
+    key: "suedeOvershirt",
     src: "assets/clothes/top/lightweight-suede-leather-overshirt-chocolate-b... 2.png",
     alt: "Brown suede overshirt from the Sheji visual archive",
     caption: "Styling frame: suede shell, oversized volume, and outdoor references.",
   },
   {
+    key: "bucketHat",
     src: "assets/clothes/hats/217702833_492815288678751_852093036610599298_n-... 2.png",
     alt: "Green bucket hat from the Sheji visual archive",
     caption: "Accessory close-up: saturated green, soft crown, and embroidered graphics.",
   },
   {
+    key: "orangePuffer",
     src: "assets/clothes/top/screenshot-png 2.png",
     alt: "Orange puffer jacket from the Sheji visual archive",
     caption: "Drop reference: inflated orange panels and high-contrast street styling.",
@@ -72,6 +78,22 @@ const FULL_SIZE_PHASES = new Set([
 
 const COLLECTION_WHEEL_THRESHOLD = 8;
 const COLLECTION_WHEEL_LOCK_BUFFER = 260;
+const COLLECTION_STACK_DESKTOP_ACTIVE_Y = 295;
+const COLLECTION_STACK_DESKTOP_GAP = 33;
+const COLLECTION_STACK_DESKTOP_HIDDEN_GAP = 360;
+const COLLECTION_STACK_MOBILE_ACTIVE_X = "7vw";
+const COLLECTION_STACK_MOBILE_NEIGHBOR_Y = 18;
+const COLLECTION_STACK_MOBILE_NEIGHBOR_SCALE = 0.86;
+const COLLECTION_STACK_MOBILE_HIDDEN_Y = 22;
+const COLLECTION_STACK_MOBILE_HIDDEN_SCALE = 0.8;
+const COLLECTION_LAYOUT_MOTION_SELECTORS = [
+  ".collection-card__title",
+  ".collection-card__meta",
+  ".collection-card__description",
+];
+const COLLECTION_LAYOUT_MOTION_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
+const COLLECTION_TITLE_FIT_GAP_DESKTOP = 8;
+const COLLECTION_TITLE_FIT_GAP_MOBILE = 6;
 
 function normalizeIndex(index, count) {
   return ((index % count) + count) % count;
@@ -106,6 +128,26 @@ function getCardSlots(activeIndex, count) {
   });
 }
 
+function getCtaLabel(state) {
+  const labelKey = CTA_LABEL_KEYS[state];
+  const fallback = state === "expanded" ? "Read more" : "Take a look";
+  return window.ShejiI18n?.t?.(labelKey, {}, fallback) || fallback;
+}
+
+function getCollectionMediaText(media, field) {
+  return window.ShejiI18n?.t?.(`collectionMedia.${media.key}.${field}`, {}, media[field]) || media[field];
+}
+
+function updateCollectionCardContent(card, collection, index) {
+  card.querySelector(".collection-card__title").textContent =
+    window.ShejiI18n?.collectionTitle?.(collection) || collection.title;
+  card.querySelector(".collection-card__meta strong").textContent = collection.designer;
+  card.querySelector(".collection-card__description").textContent =
+    window.ShejiI18n?.collectionField?.(collection, "description") || collection.description;
+  setExpandedCopy(card, collection, index);
+  setCtaLabel(card, card.classList.contains("is-expanded") ? getCtaLabel("expanded") : getCtaLabel("collapsed"));
+}
+
 function renderCollectionCards(menu, collections) {
   const template = document.getElementById("collection-card-template");
   if (!template) {
@@ -117,10 +159,8 @@ function renderCollectionCards(menu, collections) {
     const card = fragment.querySelector(".collection-card");
 
     card.dataset.cardIndex = String(index);
-    card.querySelector(".collection-card__title").textContent = collection.title;
-    card.querySelector(".collection-card__meta strong").textContent = collection.designer;
-    card.querySelector(".collection-card__description").textContent = collection.description;
-    setExpandedCopy(card, collection, index);
+    updateCollectionCardContent(card, collection, index);
+    window.ShejiI18n?.applyTranslations?.(card);
 
     menu.appendChild(fragment);
   });
@@ -151,6 +191,159 @@ function applyCardSlots(cards, slots) {
   });
 }
 
+function getCollectionCardHeight(card) {
+  if (!card) {
+    return 0;
+  }
+
+  return Math.ceil(card.offsetHeight);
+}
+
+function measureCollectionTitleWidth(title, titleStyle) {
+  if (!document.body) {
+    return title.scrollWidth;
+  }
+
+  const clone = title.cloneNode(true);
+  clone.style.position = "absolute";
+  clone.style.top = "0";
+  clone.style.left = "-10000px";
+  clone.style.width = "max-content";
+  clone.style.minWidth = "0";
+  clone.style.maxWidth = "none";
+  clone.style.visibility = "hidden";
+  clone.style.pointerEvents = "none";
+  clone.style.fontSize = titleStyle.fontSize;
+  clone.style.whiteSpace = "nowrap";
+  document.body.append(clone);
+
+  const width = Math.ceil(clone.getBoundingClientRect().width || clone.scrollWidth);
+  clone.remove();
+
+  return width;
+}
+
+function syncCollectionCardTitleFit(cards, { isMobile = false } = {}) {
+  cards.forEach((card) => {
+    const title = card.querySelector(".collection-card__title");
+    const meta = card.querySelector(".collection-card__meta");
+
+    if (!title || card.classList.contains("is-expanded") || card.classList.contains("is-animating")) {
+      card.style.removeProperty("--collection-card-title-size");
+      return;
+    }
+
+    const previousTransition = title.style.transition;
+    title.style.transition = "none";
+    card.style.removeProperty("--collection-card-title-size");
+    title.offsetWidth;
+
+    const titleStyle = window.getComputedStyle(title);
+    const currentSize = Number.parseFloat(titleStyle.fontSize);
+    const safetyGap = isMobile ? COLLECTION_TITLE_FIT_GAP_MOBILE : COLLECTION_TITLE_FIT_GAP_DESKTOP;
+    const titleRect = title.getBoundingClientRect();
+    const metaRect = meta?.getBoundingClientRect?.();
+    const availableWidth = Math.max(
+      0,
+      metaRect && metaRect.left > titleRect.left
+        ? metaRect.left - titleRect.left - safetyGap
+        : title.clientWidth - safetyGap,
+    );
+    const titleWidth = measureCollectionTitleWidth(title, titleStyle);
+
+    if (currentSize && availableWidth && titleWidth > availableWidth) {
+      const minSize = isMobile ? 36 : 60;
+      const nextSize = Math.max(minSize, Math.floor((currentSize * availableWidth) / titleWidth));
+      card.style.setProperty("--collection-card-title-size", `${nextSize}px`);
+    }
+
+    title.offsetWidth;
+    window.requestAnimationFrame(() => {
+      if (title.isConnected) {
+        title.style.transition = previousTransition;
+      }
+    });
+  });
+}
+
+function setCollectionCardStack(card, { x = "0px", y = "0px", scale = 1 }) {
+  card.style.setProperty("--collection-card-x", x);
+  card.style.setProperty("--collection-card-y", y);
+  card.style.setProperty("--collection-card-scale", String(scale));
+}
+
+function syncCollectionCardStack(cards, { isMobile = false } = {}) {
+  const menu = cards[0]?.closest(".collection-menu");
+  const activeCard = cards.find((card) => card.classList.contains("is-menu-active")) || cards[0];
+  const activeHeight = getCollectionCardHeight(activeCard);
+
+  if (isMobile) {
+    if (menu) {
+      menu.style.setProperty("--collection-menu-height", `${activeHeight + COLLECTION_STACK_MOBILE_NEIGHBOR_Y}px`);
+    }
+
+    cards.forEach((card) => {
+      if (card.classList.contains("is-menu-active")) {
+        setCollectionCardStack(card, { x: COLLECTION_STACK_MOBILE_ACTIVE_X, y: "0px", scale: 1 });
+      } else if (card.classList.contains("is-menu-next")) {
+        setCollectionCardStack(card, {
+          x: "-74vw",
+          y: `${COLLECTION_STACK_MOBILE_NEIGHBOR_Y}px`,
+          scale: COLLECTION_STACK_MOBILE_NEIGHBOR_SCALE,
+        });
+      } else if (card.classList.contains("is-menu-prev")) {
+        setCollectionCardStack(card, {
+          x: "74vw",
+          y: `${COLLECTION_STACK_MOBILE_NEIGHBOR_Y}px`,
+          scale: COLLECTION_STACK_MOBILE_NEIGHBOR_SCALE,
+        });
+      } else if (card.classList.contains("is-hidden-above")) {
+        setCollectionCardStack(card, {
+          x: "-112vw",
+          y: `${COLLECTION_STACK_MOBILE_HIDDEN_Y}px`,
+          scale: COLLECTION_STACK_MOBILE_HIDDEN_SCALE,
+        });
+      } else {
+        setCollectionCardStack(card, {
+          x: "112vw",
+          y: `${COLLECTION_STACK_MOBILE_HIDDEN_Y}px`,
+          scale: COLLECTION_STACK_MOBILE_HIDDEN_SCALE,
+        });
+      }
+    });
+
+    return;
+  }
+
+  if (menu) {
+    menu.style.setProperty("--collection-menu-height", "1080px");
+  }
+
+  cards.forEach((card) => {
+    const cardHeight = getCollectionCardHeight(card);
+
+    if (card.classList.contains("is-menu-active")) {
+      setCollectionCardStack(card, { y: `${COLLECTION_STACK_DESKTOP_ACTIVE_Y}px` });
+    } else if (card.classList.contains("is-menu-next")) {
+      setCollectionCardStack(card, {
+        y: `${COLLECTION_STACK_DESKTOP_ACTIVE_Y - cardHeight - COLLECTION_STACK_DESKTOP_GAP}px`,
+      });
+    } else if (card.classList.contains("is-menu-prev")) {
+      setCollectionCardStack(card, {
+        y: `${COLLECTION_STACK_DESKTOP_ACTIVE_Y + activeHeight + COLLECTION_STACK_DESKTOP_GAP}px`,
+      });
+    } else if (card.classList.contains("is-hidden-above")) {
+      setCollectionCardStack(card, {
+        y: `${COLLECTION_STACK_DESKTOP_ACTIVE_Y - cardHeight - COLLECTION_STACK_DESKTOP_HIDDEN_GAP}px`,
+      });
+    } else {
+      setCollectionCardStack(card, {
+        y: `${COLLECTION_STACK_DESKTOP_ACTIVE_Y + activeHeight + COLLECTION_STACK_DESKTOP_HIDDEN_GAP}px`,
+      });
+    }
+  });
+}
+
 function setCardGeometry(card, rect) {
   card.style.left = `${rect.left}px`;
   card.style.top = `${rect.top}px`;
@@ -176,6 +369,68 @@ function commitCardGeometry(card) {
   card.getBoundingClientRect();
 }
 
+function captureCollectionLayout(card) {
+  return COLLECTION_LAYOUT_MOTION_SELECTORS.map((selector) => {
+    const node = card.querySelector(selector);
+    if (!node) {
+      return null;
+    }
+
+    return {
+      node,
+      rect: node.getBoundingClientRect(),
+    };
+  }).filter(Boolean);
+}
+
+function playCollectionLayoutTransition(layout, duration) {
+  if (window.ShejiMotion?.reducedMotion || !duration) {
+    return;
+  }
+
+  layout.forEach(({ node, rect: firstRect }) => {
+    if (!node?.isConnected || typeof node.animate !== "function") {
+      return;
+    }
+
+    const lastRect = node.getBoundingClientRect();
+    const deltaX = firstRect.left - lastRect.left;
+    const deltaY = firstRect.top - lastRect.top;
+    const scaleX = firstRect.width > 0 && lastRect.width > 0
+      ? Math.max(0.2, Math.min(3, firstRect.width / lastRect.width))
+      : 1;
+    const scaleY = firstRect.height > 0 && lastRect.height > 0
+      ? Math.max(0.2, Math.min(3, firstRect.height / lastRect.height))
+      : 1;
+    const hasLayoutDelta =
+      Math.abs(deltaX) > 0.5 ||
+      Math.abs(deltaY) > 0.5 ||
+      Math.abs(scaleX - 1) > 0.01 ||
+      Math.abs(scaleY - 1) > 0.01;
+
+    if (!hasLayoutDelta) {
+      return;
+    }
+
+    node.animate(
+      [
+        {
+          transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scaleX}, ${scaleY})`,
+          transformOrigin: "top left",
+        },
+        {
+          transform: "translate3d(0, 0, 0) scale(1, 1)",
+          transformOrigin: "top left",
+        },
+      ],
+      {
+        duration,
+        easing: COLLECTION_LAYOUT_MOTION_EASING,
+      },
+    );
+  });
+}
+
 function setCtaLabel(card, label) {
   const labelNode = card.querySelector(".collection-card__cta-label");
   if (labelNode) {
@@ -191,20 +446,34 @@ function getCollectionLongread(collection, index) {
     {
       type: "media",
       ...firstMedia,
-      caption: `${collection.title} detail. ${firstMedia.caption}`,
+      alt: getCollectionMediaText(firstMedia, "alt"),
+      caption:
+        window.ShejiI18n?.t?.("collection.detailCaption", {
+          title: window.ShejiI18n?.collectionTitle?.(collection) || collection.title,
+          caption: getCollectionMediaText(firstMedia, "caption"),
+        }) || `${collection.title} detail. ${firstMedia.caption}`,
     },
     {
       type: "text",
-      text: collection.expandedCopy,
+      text: window.ShejiI18n?.collectionField?.(collection, "expandedCopy") || collection.expandedCopy,
     },
     {
       type: "media",
       ...secondMedia,
-      caption: `${collection.title} styling reference. ${secondMedia.caption}`,
+      alt: getCollectionMediaText(secondMedia, "alt"),
+      caption:
+        window.ShejiI18n?.t?.("collection.stylingCaption", {
+          title: window.ShejiI18n?.collectionTitle?.(collection) || collection.title,
+          caption: getCollectionMediaText(secondMedia, "caption"),
+        }) || `${collection.title} styling reference. ${secondMedia.caption}`,
     },
     {
       type: "text",
-      text: `${collection.description} The full drop keeps the same visual language across product shots, labels, trims, and the way each piece sits on the body.`,
+      text:
+        window.ShejiI18n?.t?.("collection.fullDrop", {
+          description: window.ShejiI18n?.collectionField?.(collection, "description") || collection.description,
+        }) ||
+        `${collection.description} The full drop keeps the same visual language across product shots, labels, trims, and the way each piece sits on the body.`,
     },
   ];
 }
@@ -394,6 +663,7 @@ function initCollectionExperience(menu) {
     return;
   }
 
+  const merchandising = window.ShejiRuntime.getMerchandisingData();
   const viewModel = createCollectionViewModel(cards.length);
   const { state } = viewModel;
   const mobileCollectionQuery = window.matchMedia("(max-width: 767px), (pointer: coarse)");
@@ -416,7 +686,32 @@ function initCollectionExperience(menu) {
 
   const applySlots = () => {
     applyCardSlots(cards, getCardSlots(state.activeIndex, cards.length));
+    syncCollectionCardTitleFit(cards, { isMobile: mobileCollectionQuery.matches });
+    syncCollectionCardStack(cards, { isMobile: mobileCollectionQuery.matches });
     window.ShejiRuntime.emitCollectionChange(state.activeIndex);
+  };
+
+  const syncStackLayout = () => {
+    syncCollectionCardTitleFit(cards, { isMobile: mobileCollectionQuery.matches });
+    syncCollectionCardStack(cards, { isMobile: mobileCollectionQuery.matches });
+  };
+
+  const scheduleStackSync = () => {
+    if (state.phase !== COLLECTION_PHASES.idle) {
+      return;
+    }
+
+    syncStackLayout();
+    window.requestAnimationFrame(() => {
+      if (state.phase === COLLECTION_PHASES.idle) {
+        syncStackLayout();
+      }
+    });
+    window.setTimeout(() => {
+      if (state.phase === COLLECTION_PHASES.idle) {
+        syncStackLayout();
+      }
+    }, contentDuration() + 120);
   };
 
   const clearAnimationTimer = () => {
@@ -456,6 +751,7 @@ function initCollectionExperience(menu) {
       "is-expanding-content",
     );
     applyViewPhase();
+    syncStackLayout();
     clearCardGeometry(card);
 
     window.setTimeout(() => {
@@ -478,8 +774,10 @@ function initCollectionExperience(menu) {
     commitCardGeometry(card);
 
     requestAnimationFrame(() => {
+      const layout = captureCollectionLayout(card);
       card.classList.add("is-expanded");
-      setCtaLabel(card, CTA_LABELS.expanded);
+      setCtaLabel(card, getCtaLabel("expanded"));
+      playCollectionLayoutTransition(layout, contentDuration());
       replayCtaHover(card);
     });
 
@@ -527,14 +825,17 @@ function initCollectionExperience(menu) {
 
   const cycleTo = (nextIndex) => {
     if (!viewModel.cycleTo(nextIndex)) {
-      return;
+      return false;
     }
 
     applySlots();
 
     window.setTimeout(() => {
       viewModel.finishCycle();
+      syncStackLayout();
     }, cycleDuration());
+
+    return true;
   };
 
   const selectCollection = (index = state.activeIndex) => {
@@ -619,6 +920,8 @@ function initCollectionExperience(menu) {
   };
 
   const openCard = (card) => {
+    syncStackLayout();
+
     const sourceRect = card.getBoundingClientRect();
     if (!viewModel.beginOpen(card, sourceRect)) {
       return false;
@@ -651,9 +954,11 @@ function initCollectionExperience(menu) {
     commitCardGeometry(card);
 
     requestAnimationFrame(() => {
+      const layout = captureCollectionLayout(card);
       card.classList.remove("is-expanded");
       resetCtaClickCollapse(card);
-      setCtaLabel(card, CTA_LABELS.collapsed);
+      setCtaLabel(card, getCtaLabel("collapsed"));
+      playCollectionLayoutTransition(layout, contentDuration());
       replayCtaHover(card);
     });
 
@@ -725,14 +1030,47 @@ function initCollectionExperience(menu) {
   menu.addEventListener("pointercancel", resetSwipeState);
 
   window.addEventListener("resize", () => {
-    if (!state.expandedCard || !viewModel.isFullSize()) {
+    if (state.expandedCard && viewModel.isFullSize()) {
+      setExpandedGeometry(state.expandedCard);
       return;
     }
 
-    setExpandedGeometry(state.expandedCard);
+    scheduleStackSync();
+  });
+
+  window.ShejiI18n?.onChange?.(() => {
+    cards.forEach((card, index) => {
+      const collection = merchandising.getCollectionByIndex(index);
+      if (collection) {
+        updateCollectionCardContent(card, collection, index);
+      }
+    });
+    window.ShejiI18n?.applyTranslations?.(menu);
+    scheduleStackSync();
+  });
+
+  window.ShejiRuntime?.onCollectionNavigate?.(({ activeIndex = null, direction = 0 }) => {
+    if (state.phase !== COLLECTION_PHASES.idle) {
+      return;
+    }
+
+    const nextIndex =
+      typeof activeIndex === "number"
+        ? normalizeIndex(activeIndex, cards.length)
+        : normalizeIndex(state.activeIndex + Number(direction || 0), cards.length);
+
+    if (cycleTo(nextIndex)) {
+      selectCollection(nextIndex);
+    }
   });
 
   applySlots();
+
+  scheduleStackSync();
+
+  document.fonts?.ready?.then(() => {
+    scheduleStackSync();
+  });
 }
 
 window.ShejiCollections = {

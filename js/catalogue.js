@@ -1,16 +1,16 @@
 const PRICE_FILTERS = [
   {
-    label: "Under 100$",
+    labelKey: "filters.priceUnder100",
     value: "under-100",
     matches: (product) => product.price < 100,
   },
   {
-    label: "100$ - 300$",
+    labelKey: "filters.price100To300",
     value: "100-300",
     matches: (product) => product.price >= 100 && product.price <= 300,
   },
   {
-    label: "Over 300$",
+    labelKey: "filters.priceOver300",
     value: "over-300",
     matches: (product) => product.price > 300,
   },
@@ -49,23 +49,16 @@ function uniqueValues(values) {
 }
 
 function formatPrice(price) {
-  return `${price}$`;
+  return window.ShejiI18n?.formatPrice?.(price) || `${price}$`;
 }
 
 function getProductSearchText(product) {
-  if (product.searchableText) {
-    return product.searchableText;
-  }
-
   return [
-    product.name,
-    product.collection,
-    product.collectionRecord?.designer,
-    product.colour,
-    product.price,
-    product.sale ? "sale" : "",
+    product.searchableText,
+    window.ShejiI18n?.getProductSearchText?.(product),
     ...(product.sizes || []),
   ]
+    .filter(Boolean)
     .join(" ")
     .toLowerCase();
 }
@@ -198,12 +191,15 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
 
       if (group === "colour") {
         return uniqueValues(products.map((product) => product.colour)).map((value) => ({
-          label: value,
+          label: window.ShejiI18n?.translateColour?.(value) || value,
           value,
         }));
       }
 
-      return PRICE_FILTERS.map(({ label, value }) => ({ label, value }));
+      return PRICE_FILTERS.map(({ labelKey, value }) => ({
+        label: window.ShejiI18n?.t?.(labelKey) || labelKey,
+        value,
+      }));
     },
     getFilters() {
       return { ...filters };
@@ -319,7 +315,17 @@ function renderSaleRail(product) {
   const line = document.createElement("span");
   line.className = "product-card__sale-line";
   line.setAttribute("aria-hidden", "true");
-  line.textContent = `${product.badge || "#1"} SALE! SALE! SALE!`;
+  const lineText = (
+    window.ShejiI18n?.t?.("product.saleRail", { badge: "" }) ||
+    "SALE! SALE! SALE!"
+  ).replace(/\s+/g, " ").trim();
+
+  for (let index = 0; index < 2; index += 1) {
+    const group = document.createElement("span");
+    group.className = "product-card__sale-group";
+    group.textContent = lineText;
+    line.append(group);
+  }
 
   rail.append(line, label);
   return rail;
@@ -337,7 +343,13 @@ function renderPriceButton(product) {
   button.className = "price-pill";
   button.type = "button";
   button.dataset.addToCart = product.id;
-  button.setAttribute("aria-label", `Add ${product.name} to cart for ${formatPrice(product.price)}`);
+  button.setAttribute(
+    "aria-label",
+    window.ShejiI18n?.t?.("product.addNamedToCartForPrice", {
+      name: window.ShejiI18n?.productDisplayName?.(product) || product.name,
+      price: formatPrice(product.price),
+    }) || `Add ${product.name} to cart for ${formatPrice(product.price)}`,
+  );
 
   button.append(
     createIcon("source/icons/shopping_cart.svg"),
@@ -358,7 +370,12 @@ function renderProductCard(product, commerce) {
   favorite.className = "product-card__favorite";
   favorite.type = "button";
   favorite.dataset.favorite = product.id;
-  favorite.setAttribute("aria-label", `Favorite ${product.name}`);
+  favorite.setAttribute(
+    "aria-label",
+    window.ShejiI18n?.t?.("product.favorite", {
+      name: window.ShejiI18n?.productDisplayName?.(product) || product.name,
+    }) || `Favorite ${product.name}`,
+  );
   favorite.setAttribute("aria-pressed", isFavorite ? "true" : "false");
   favorite.append(
     createIcon(isFavorite ? "source/icons/favorite.svg" : "source/icons/favorite_border.svg"),
@@ -369,7 +386,7 @@ function renderProductCard(product, commerce) {
 
   const image = document.createElement("img");
   image.src = product.image;
-  image.alt = product.alt;
+  image.alt = window.ShejiI18n?.productField?.(product, "alt") || product.alt;
   image.loading = "lazy";
   media.append(image);
 
@@ -377,7 +394,12 @@ function renderProductCard(product, commerce) {
   detailLink.className = "product-card__detail-link";
   detailLink.href = `product.html?id=${encodeURIComponent(product.id)}`;
   detailLink.dataset.viewProduct = product.id;
-  detailLink.setAttribute("aria-label", `View ${product.name} product detail`);
+  detailLink.setAttribute(
+    "aria-label",
+    window.ShejiI18n?.t?.("product.viewDetail", {
+      name: window.ShejiI18n?.productDisplayName?.(product) || product.name,
+    }) || `View ${product.name} product detail`,
+  );
 
   const footer = document.createElement("div");
   footer.className = "product-card__footer";
@@ -393,7 +415,7 @@ function renderProductCard(product, commerce) {
 function renderEmptyState(grid) {
   const empty = document.createElement("p");
   empty.className = "product-grid__empty";
-  empty.textContent = "No clothes survived that filter.";
+  empty.textContent = window.ShejiI18n?.t?.("product.emptyFilter") || "No clothes survived that filter.";
   grid.append(empty);
 }
 
@@ -402,7 +424,7 @@ function renderCartPopover(popover, cartRows, total) {
 
   if (cartRows.length === 0) {
     const empty = document.createElement("p");
-    empty.textContent = "Cart is empty.";
+    empty.textContent = window.ShejiI18n?.t?.("cart.empty") || "Cart is empty.";
     popover.append(empty);
     return;
   }
@@ -411,9 +433,12 @@ function renderCartPopover(popover, cartRows, total) {
     const row = document.createElement("div");
     row.className = "cart-popover__row";
 
-    const productName = [product.collection, product.name].filter(Boolean).join(" ");
+    const productName = window.ShejiI18n?.productDisplayName?.(product) ||
+      [product.collection, product.name].filter(Boolean).join(" ");
     const productTitle = document.createElement("span");
-    productTitle.textContent = `${productName} x ${quantity}`;
+    productTitle.textContent =
+      window.ShejiI18n?.t?.("cart.popoverLine", { name: productName, quantity }) ||
+      `${productName} x ${quantity}`;
 
     const price = document.createElement("span");
     price.textContent = formatPrice(lineTotal);
@@ -423,7 +448,7 @@ function renderCartPopover(popover, cartRows, total) {
 
   const totalRow = document.createElement("div");
   totalRow.className = "cart-popover__total";
-  totalRow.textContent = `Total ${formatPrice(total)}`;
+  totalRow.textContent = `${window.ShejiI18n?.t?.("cart.total") || "Total"} ${formatPrice(total)}`;
   popover.append(totalRow);
 }
 
@@ -457,6 +482,18 @@ function renderFilterOptions(control, commerce, render) {
   });
 }
 
+function updateFilterOptionLabels(control, commerce) {
+  const group = control.dataset.filterGroup;
+  const options = commerce.getFilterOptions(group);
+
+  control.querySelectorAll("[data-filter-value]").forEach((button) => {
+    const matchedOption = options.find((option) => option.value === button.dataset.filterValue);
+    if (matchedOption) {
+      button.textContent = matchedOption.label;
+    }
+  });
+}
+
 function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
   const grid = catalogue.querySelector("[data-product-grid]");
   const filterControls = Array.from(catalogue.querySelectorAll("[data-filter-control][data-filter-group]"));
@@ -474,10 +511,10 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
   }
 
   const defaultHeading = {
-    title: headingTitle?.textContent || "All Clothing",
-    metaText: "drop curated by",
+    title: window.ShejiI18n?.t?.("nav.allClothing") || headingTitle?.textContent || "All Clothing",
+    metaText: window.ShejiI18n?.t?.("collection.curatedBy") || "drop curated by",
     metaMark: "SHEJI",
-    backLabel: backLink?.getAttribute("aria-label") || "Back to top",
+    backLabel: window.ShejiI18n?.t?.("nav.backToTop") || backLink?.getAttribute("aria-label") || "Back to top",
   };
 
   const cartPopover = document.createElement("div");
@@ -494,6 +531,7 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
       const trigger = control.querySelector("[data-filter-trigger]");
       const optionButtons = control.querySelectorAll("[data-filter-value]");
 
+      updateFilterOptionLabels(control, commerce);
       control.classList.toggle("is-filtered", Boolean(activeValue));
       trigger?.setAttribute("aria-pressed", activeValue ? "true" : "false");
 
@@ -507,6 +545,10 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
 
   const updateCart = () => {
     const cartTotal = commerce.getCartCount();
+    const formattedCartItems =
+      window.ShejiI18n?.formatCartItemCount?.(cartTotal) ||
+      `${cartTotal} ${cartTotal === 1 ? "item" : "items"}`;
+    const cartItems = formattedCartItems.replace(`${cartTotal} `, "");
 
     if (cartCount) {
       cartCount.textContent = String(cartTotal);
@@ -514,7 +556,10 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
 
     cartButton?.setAttribute(
       "aria-label",
-      `Open cart, ${cartTotal} ${cartTotal === 1 ? "item" : "items"}`,
+      window.ShejiI18n?.t?.("cart.open", {
+        count: cartTotal,
+        items: cartItems,
+      }) || `Open cart, ${cartTotal} ${cartTotal === 1 ? "item" : "items"}`,
     );
     renderCartPopover(cartPopover, commerce.getCartRows(), commerce.getCartTotal());
   };
@@ -525,7 +570,9 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
     catalogue.classList.toggle("is-collection-filtered", Boolean(activeCollection));
 
     if (headingTitle) {
-      headingTitle.textContent = activeCollection?.title || defaultHeading.title;
+      headingTitle.textContent = activeCollection
+        ? window.ShejiI18n?.collectionTitle?.(activeCollection) || activeCollection.title
+        : window.ShejiI18n?.t?.("nav.allClothing") || defaultHeading.title;
     }
 
     if (headingMeta) {
@@ -533,14 +580,20 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
       mark.textContent = activeCollection?.designer || defaultHeading.metaMark;
 
       headingMeta.replaceChildren(
-        document.createTextNode(`${activeCollection ? "drop made by" : defaultHeading.metaText} `),
+        document.createTextNode(
+          `${activeCollection
+            ? window.ShejiI18n?.t?.("collection.madeBy") || "drop made by"
+            : window.ShejiI18n?.t?.("collection.curatedBy") || defaultHeading.metaText} `,
+        ),
         mark,
       );
     }
 
     backLink?.setAttribute(
       "aria-label",
-      activeCollection ? "Back to all clothing" : defaultHeading.backLabel,
+      activeCollection
+        ? window.ShejiI18n?.t?.("nav.allClothing") || "Back to all clothing"
+        : window.ShejiI18n?.t?.("nav.backToTop") || defaultHeading.backLabel,
     );
   };
 
@@ -548,6 +601,10 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
     if (change.type === "cart") {
       updateCart();
     }
+  });
+
+  window.ShejiI18n?.onChange?.(() => {
+    render();
   });
 
   const setCartPreviewOpen = (isOpen) => {

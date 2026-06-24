@@ -3,44 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sheji Cart</title>
+    <title data-i18n="page.cartTitle">Sheji Cart</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="cart-page">
+    <nav class="language-switcher" aria-label="Language" data-language-switcher data-i18n-aria-label="languageSwitcher.label">
+      <button class="language-switcher__option" type="button" data-language-option="en" aria-pressed="false" aria-label="English" data-i18n-aria-label="languageSwitcher.en">EN</button>
+      <button class="language-switcher__option" type="button" data-language-option="ru" aria-pressed="false" aria-label="Russian" data-i18n-aria-label="languageSwitcher.ru">RU</button>
+      <button class="language-switcher__option" type="button" data-language-option="zh" aria-pressed="false" aria-label="Chinese language slot" data-i18n-aria-label="languageSwitcher.zh" title="Chinese can be added later" data-i18n-title="languageSwitcher.zhTitle">ZH</button>
+    </nav>
     <main class="cart-page__main">
       <section class="cart-detail" aria-labelledby="cart-title" data-cart-page>
         <div class="cart-detail__toolbar">
           <a class="cart-detail__back" href="index.html#catalogue">
             <img src="source/icons/west.svg" alt="" />
-            <span>Go back</span>
+            <span data-i18n="collection.back">Go back</span>
           </a>
         </div>
 
         <header class="cart-detail__header">
-          <p class="cart-detail__eyebrow">sheji bag</p>
-          <h1 id="cart-title">Cart</h1>
+          <p class="cart-detail__eyebrow" data-i18n="cart.eyebrow">sheji bag</p>
+          <h1 id="cart-title" data-i18n="cart.title">Cart</h1>
           <p class="cart-detail__summary" data-cart-summary>0 items</p>
         </header>
 
         <div class="cart-detail__empty" data-cart-empty hidden>
-          <p>Cart is empty.</p>
-          <a class="cart-detail__shop-link" href="index.html#catalogue">Find clothes</a>
+          <p data-i18n="cart.empty">Cart is empty.</p>
+          <a class="cart-detail__shop-link" href="index.html#catalogue" data-i18n="cart.findClothes">Find clothes</a>
         </div>
 
         <div class="cart-detail__list" data-cart-list></div>
 
         <footer class="cart-detail__footer" data-cart-footer hidden>
           <button class="cart-detail__clear" type="button" data-cart-action="clear">
-            Clear cart
+            <span data-i18n="cart.clear">Clear cart</span>
           </button>
           <p class="cart-detail__total">
-            <span>Total</span>
+            <span data-i18n="cart.total">Total</span>
             <strong data-cart-total>0$</strong>
           </p>
         </footer>
       </section>
     </main>
 
+    <script src="js/i18n.js"></script>
     <script src="data/collections.js"></script>
     <script src="data/products.js"></script>
     <script src="js/merchandising.js"></script>
