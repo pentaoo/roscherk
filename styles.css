@@ -1001,6 +1001,11 @@ button {
     padding var(--duration-expand-content) var(--smooth);
 }
 
+.collection-card__header {
+  grid-area: title;
+  display: contents;
+}
+
 .collection-card__eyebrow {
   display: none;
   margin: 0 0 4px;
@@ -1307,7 +1312,7 @@ html[lang="ru"] .collection-card__description {
 
 .collection-card__designer {
   flex: 0 0 auto;
-  margin: 0 16px 0 auto;
+  margin: 0;
 }
 
 .collection-card__designer-face {
@@ -1588,12 +1593,25 @@ html[lang="ru"] .collection-card__description {
   padding: 28px 0;
 }
 
+.collection-card.is-expanded .collection-card__header,
+.collection-card.is-expanding-content.is-expanded .collection-card__header,
+.collection-card.is-collapsing-content.is-expanded .collection-card__header {
+  order: 1;
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 36px 0 0;
+  padding: 0 64px;
+}
+
 .collection-card.is-expanded .collection-card__title,
 .collection-card.is-expanding-content.is-expanded .collection-card__title,
 .collection-card.is-collapsing-content.is-expanded .collection-card__title {
-  order: 1;
-  margin: 36px 0 0;
-  padding: 0 64px;
+  order: initial;
+  margin: 0;
+  padding: 0;
   font-size: 128px;
   letter-spacing: -2.56px;
   line-height: 0.9;
@@ -5515,9 +5533,15 @@ html[lang="ru"] .filter-control--colour .filter-control__option {
   .collection-card.is-expanded .collection-card__title,
   .collection-card.is-expanding-content.is-expanded .collection-card__title,
   .collection-card.is-collapsing-content.is-expanded .collection-card__title {
-    padding: 0 32px;
     font-size: clamp(56px, 18vw, 80px);
     letter-spacing: -1.2px;
+  }
+
+  .collection-card.is-expanded .collection-card__header,
+  .collection-card.is-expanding-content.is-expanded .collection-card__header,
+  .collection-card.is-collapsing-content.is-expanded .collection-card__header {
+    gap: 10px;
+    padding: 0 32px;
   }
 
   html[lang="ru"] .collection-card.is-expanded .collection-card__title,
@@ -5582,7 +5606,7 @@ html[lang="ru"] .filter-control--colour .filter-control__option {
   }
 
   .collection-card__designer {
-    margin: 4px 8px 0 auto;
+    margin: 0;
   }
 
   .collection-card__designer-face {
