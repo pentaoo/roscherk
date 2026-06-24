@@ -6127,16 +6127,25 @@ html[lang="ru"] .filter-control--colour .filter-control__option {
   }
 
   .product-detail__purchase {
-    flex-wrap: wrap;
-    align-items: stretch;
-    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
-  .product-detail__size-selector,
+  .product-detail__size-selector {
+    order: 2;
+    width: 100%;
+    justify-content: center;
+  }
+
   .size-selector {
     width: 100%;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: center;
+  }
+
+  .size-selector:not(.is-open) .size-selector__option {
+    display: none;
   }
 
   .size-selector.is-open .size-selector__option {
@@ -6148,6 +6157,7 @@ html[lang="ru"] .filter-control--colour .filter-control__option {
   }
 
   .product-detail__add {
+    order: 1;
     width: 100%;
     min-width: 0;
   }
