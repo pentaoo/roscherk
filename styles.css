@@ -1858,7 +1858,12 @@ html[lang="ru"] .collection-card.is-collapsing-content.is-expanded .collection-c
   pointer-events: auto;
 }
 
-.collection-view-open .home-collage,
+.collection-view-open .home-collage {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
 .collection-view-closing .home-collage {
   z-index: 105;
   top: 84px;
