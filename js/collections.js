@@ -487,9 +487,16 @@ function setExpandedCopy(card, collection, index) {
   }
 
   container.innerHTML = "";
+  const blocks = getCollectionLongread(collection, index);
+  const mediaBlocks = blocks.filter((block) => block.type === "media");
+  const textBlocks = blocks.filter((block) => block.type !== "media");
 
-  getCollectionLongread(collection, index).forEach((block) => {
-    if (block.type === "media") {
+  if (mediaBlocks.length > 0) {
+    const slider = document.createElement("div");
+    slider.className = "collection-card__slider";
+    slider.setAttribute("aria-label", window.ShejiI18n?.t?.("collection.mediaSlider", {}, "Collection images") || "Collection images");
+
+    mediaBlocks.forEach((block) => {
       const figure = document.createElement("figure");
       figure.className = "collection-card__figure";
 
@@ -504,10 +511,13 @@ function setExpandedCopy(card, collection, index) {
       caption.textContent = block.caption;
 
       figure.append(image, caption);
-      container.append(figure);
-      return;
-    }
+      slider.append(figure);
+    });
 
+    container.append(slider);
+  }
+
+  textBlocks.forEach((block) => {
     const paragraph = document.createElement("p");
     paragraph.className = "collection-card__expanded-paragraph";
     paragraph.textContent = block.text;

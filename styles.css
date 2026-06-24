@@ -1706,48 +1706,44 @@ html[lang="ru"] .collection-card.is-collapsing-content.is-expanded .collection-c
   transition: font-size var(--duration-expand-content) var(--smooth);
 }
 
+.collection-card.is-expanded .collection-card__slider,
+.collection-card.is-expanding-content.is-expanded .collection-card__slider,
+.collection-card.is-collapsing-content.is-expanded .collection-card__slider {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 64px 8px;
+  scroll-padding-inline: 64px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.collection-card.is-expanded .collection-card__slider::-webkit-scrollbar,
+.collection-card.is-expanding-content.is-expanded .collection-card__slider::-webkit-scrollbar,
+.collection-card.is-collapsing-content.is-expanded .collection-card__slider::-webkit-scrollbar {
+  display: none;
+}
+
 .collection-card.is-expanded .collection-card__figure,
 .collection-card.is-expanding-content.is-expanded .collection-card__figure,
 .collection-card.is-collapsing-content.is-expanded .collection-card__figure {
-  display: grid;
-  grid-template-columns: 144px minmax(0, 1fr) 144px;
-  gap: 8px;
-  width: 100%;
-}
-
-.collection-card.is-expanded .collection-card__figure::before,
-.collection-card.is-expanded .collection-card__figure::after,
-.collection-card.is-expanding-content.is-expanded .collection-card__figure::before,
-.collection-card.is-expanding-content.is-expanded .collection-card__figure::after,
-.collection-card.is-collapsing-content.is-expanded .collection-card__figure::before,
-.collection-card.is-collapsing-content.is-expanded .collection-card__figure::after {
-  content: "";
-  display: block;
-  height: 329px;
-  border-radius: 72px;
-  background: var(--yellow-light);
-}
-
-.collection-card.is-expanded .collection-card__figure::before,
-.collection-card.is-expanding-content.is-expanded .collection-card__figure::before,
-.collection-card.is-collapsing-content.is-expanded .collection-card__figure::before {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.collection-card.is-expanded .collection-card__figure::after,
-.collection-card.is-expanding-content.is-expanded .collection-card__figure::after,
-.collection-card.is-collapsing-content.is-expanded .collection-card__figure::after {
-  grid-column: 3;
-  grid-row: 1;
+  display: flex;
+  min-width: min(760px, calc(100% - 96px));
+  flex: 0 0 min(760px, calc(100% - 96px));
+  flex-direction: column;
+  gap: 10px;
+  scroll-snap-align: start;
 }
 
 .collection-card.is-expanded .collection-card__image,
 .collection-card.is-expanding-content.is-expanded .collection-card__image,
 .collection-card.is-collapsing-content.is-expanded .collection-card__image {
-  grid-column: 2;
-  grid-row: 1;
+  display: block;
+  width: 100%;
   min-height: 329px;
+  max-height: 520px;
   border-radius: 72px;
   background: var(--yellow-light);
   object-fit: contain;
@@ -1756,8 +1752,7 @@ html[lang="ru"] .collection-card.is-collapsing-content.is-expanded .collection-c
 .collection-card.is-expanded .collection-card__caption,
 .collection-card.is-expanding-content.is-expanded .collection-card__caption,
 .collection-card.is-collapsing-content.is-expanded .collection-card__caption {
-  grid-column: 1 / -1;
-  padding: 0 64px;
+  padding: 0 8px;
   color: var(--black);
 }
 
@@ -5638,6 +5633,29 @@ html[lang="ru"] .filter-control--colour .filter-control__option {
     padding: 8px 10px 10px;
     border-width: 3px;
     font-size: 16px;
+  }
+
+  .collection-card.is-expanded .collection-card__slider,
+  .collection-card.is-expanding-content.is-expanded .collection-card__slider,
+  .collection-card.is-collapsing-content.is-expanded .collection-card__slider {
+    gap: 12px;
+    padding: 0 24px 8px;
+    scroll-padding-inline: 24px;
+  }
+
+  .collection-card.is-expanded .collection-card__figure,
+  .collection-card.is-expanding-content.is-expanded .collection-card__figure,
+  .collection-card.is-collapsing-content.is-expanded .collection-card__figure {
+    min-width: calc(100vw - 48px);
+    flex-basis: calc(100vw - 48px);
+  }
+
+  .collection-card.is-expanded .collection-card__image,
+  .collection-card.is-expanding-content.is-expanded .collection-card__image,
+  .collection-card.is-collapsing-content.is-expanded .collection-card__image {
+    min-height: 280px;
+    max-height: 420px;
+    border-radius: 52px;
   }
 
   .collection-game {
