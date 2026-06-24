@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-labelledby="title desc">
+  <title id="title">SHEJI visual sitemap</title>
+  <desc id="desc">Presentation-style sitemap for SHEJI with the home page as the root and major pages below it.</desc>
+  <rect width="1920" height="1080" fill="#ffffff"/>
+
+  <g stroke="#b8b8b8" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M960 250 V455"/>
+    <path d="M255 455 H1665"/>
+    <path d="M255 455 V600"/>
+    <path d="M607 455 V600"/>
+    <path d="M960 455 V600"/>
+    <path d="M1312 455 V600"/>
+    <path d="M1665 455 V600"/>
+
+    <path d="M255 730 V790"/>
+    <path d="M160 790 H350"/>
+    <path d="M160 790 V835"/>
+    <path d="M255 790 V835"/>
+    <path d="M350 790 V835"/>
+
+    <path d="M607 730 V790"/>
+    <path d="M522 790 H692"/>
+    <path d="M522 790 V835"/>
+    <path d="M692 790 V835"/>
+
+    <path d="M960 730 V790"/>
+    <path d="M860 790 H1060"/>
+    <path d="M860 790 V835"/>
+    <path d="M960 790 V835"/>
+    <path d="M1060 790 V835"/>
+
+    <path d="M1312 730 V790"/>
+    <path d="M1240 790 H1384"/>
+    <path d="M1240 790 V835"/>
+    <path d="M1384 790 V835"/>
+  </g>
+
+  <g fill="#000000" font-family="Arial, Helvetica, sans-serif" text-anchor="middle">
+    <text x="960" y="205" font-size="118" font-weight="400">Главная</text>
+
+    <text x="255" y="685" font-size="82" font-weight="400">
+      <tspan x="255" dy="0">Главная</tspan>
+      <tspan x="255" dy="88">+ каталог</tspan>
+    </text>
+    <text x="607" y="705" font-size="96" font-weight="400">Шоу</text>
+    <text x="960" y="678" font-size="82" font-weight="400">
+      <tspan x="960" dy="0">Карточка</tspan>
+      <tspan x="960" dy="88">товара</tspan>
+    </text>
+    <text x="1312" y="705" font-size="96" font-weight="400">Корзина</text>
+    <text x="1665" y="705" font-size="84" font-weight="400">Избранное</text>
+
+    <text x="160" y="878" font-size="30">Коллекции</text>
+    <text x="255" y="878" font-size="30">Фильтры</text>
+    <text x="350" y="878" font-size="30">Мини-игры</text>
+
+    <text x="522" y="878" font-size="30">Событие</text>
+    <text x="692" y="878" font-size="30">Товары</text>
+
+    <text x="860" y="878" font-size="30">Размер</text>
+    <text x="960" y="878" font-size="30">Рекомендации</text>
+    <text x="1060" y="878" font-size="30">В корзину</text>
+
+    <text x="1240" y="878" font-size="30">Кол-во</text>
+    <text x="1384" y="878" font-size="30">Итого</text>
+  </g>
+
+  <g fill="#555555" font-family="Arial, Helvetica, sans-serif" text-anchor="middle">
+    <text x="255" y="945" font-size="24">index.html</text>
+    <text x="607" y="945" font-size="24">show.html?id=&lt;show-id&gt;</text>
+    <text x="960" y="945" font-size="24">product.html?id=&lt;product-id&gt;</text>
+    <text x="1312" y="945" font-size="24">cart.html</text>
+    <text x="1665" y="945" font-size="24">favorites.html</text>
+  </g>
+</svg>

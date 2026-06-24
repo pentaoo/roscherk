@@ -117,6 +117,7 @@ const SHEJI_TRANSLATIONS = {
       },
     },
     banner: {
+      allClothing: "All Clothing",
       quiet: "Nothing in clothes is quiet",
     },
     nav: {
@@ -344,6 +345,7 @@ const SHEJI_TRANSLATIONS = {
       },
     },
     banner: {
+      allClothing: "Все вещи",
       quiet: "В одежде нет тишины",
     },
     nav: {

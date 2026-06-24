@@ -55,31 +55,31 @@ window.SHEJI_COLLECTIONS = [
     title: "Stone",
     designer: "LEE JING",
     description:
-      "Коллекция 石 — это одежда, собранная как архитектурный объект. В её основе — ощущение веса, плотности и формы, будто вещи были вырезаны из цельного каменного блока. Грубые фактуры, жёсткие силуэты, глубокий чёрный и выжженный белый создают почти industrial-fashion эстетику, где одежда перестаёт быть просто тканью и становится конструкцией.",
+      "The 石 collection treats clothing like architecture: weight, density, and form, as if each piece was cut from a single block of stone. Rough textures, rigid silhouettes, deep black, and burned white create an industrial-fashion mood where fabric becomes construction.",
     expandedCopy:
-      "Каждый предмет выглядит как артефакт: массивные швы, утилитарные детали, холодная графичность и минимализм без декоративности. Здесь нет попытки выглядеть «аккуратно» — коллекция строится на несовершенстве поверхности, на тяжести материала и ощущении физического объекта.",
+      "Each piece feels like an artifact: heavy seams, utilitarian details, cold graphics, and stripped-back minimalism. Stone is built around imperfect surfaces, material weight, and the feeling of a physical object.",
     look: [
       {
         productId: "fruity-glasses-1",
-        desktop: { x: 49, y: 13, w: 32, z: 5, rotate: 0 },
+        desktop: { x: 47, y: 13, w: 36, z: 5, rotate: 0 },
         mobile: { x: 50, y: 13, w: 44, z: 5, rotate: 0, from: "right" },
         parallax: 44,
       },
       {
         productId: "water-puffer-1",
-        desktop: { x: 48, y: 37, w: 41, z: 3, rotate: 0 },
+        desktop: { x: 46, y: 37, w: 46, z: 3, rotate: 0 },
         mobile: { x: 50, y: 39, w: 58, z: 3, rotate: 0, from: "left" },
         parallax: 28,
       },
       {
         productId: "stone-painter-pants-1",
-        desktop: { x: 46, y: 71, w: 31, z: 1, rotate: -2 },
+        desktop: { x: 44, y: 71, w: 35, z: 1, rotate: -2 },
         mobile: { x: 48, y: 70, w: 43, z: 1, rotate: -2, from: "right" },
         parallax: 18,
       },
       {
         productId: "fruity-tote-1",
-        desktop: { x: 68, y: 58, w: 33, z: 4, rotate: 7 },
+        desktop: { x: 64, y: 58, w: 37, z: 4, rotate: 7 },
         mobile: { x: 69, y: 58, w: 42, z: 4, rotate: 7, from: "left" },
         parallax: 54,
       },

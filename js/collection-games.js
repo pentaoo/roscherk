@@ -132,8 +132,20 @@ function refreshCollectionGameLabels(root = document) {
       state.faceCopy.textContent = collectionGameText("collectionGame.hintShort", {}, "DO NOT TAP THE DESIGNER");
     }
 
-    if (state.faceMark) {
-      state.faceMark.textContent = getDesignerInitials(state.collection);
+    if (state.faceImage && state.config.faceSrc) {
+      state.faceImage.hidden = false;
+      state.faceImage.src = state.config.faceSrc;
+      state.faceMark?.classList.remove("is-fallback");
+    } else {
+      state.faceImage?.removeAttribute("src");
+      if (state.faceImage) {
+        state.faceImage.hidden = true;
+      }
+      state.faceMark?.classList.add("is-fallback");
+    }
+
+    if (state.faceInitials) {
+      state.faceInitials.textContent = getDesignerInitials(state.collection);
     }
 
     if (state.titleEl) {
@@ -615,6 +627,8 @@ function createCollectionGameState(card, collection, config) {
     shell,
     faceButton: card.querySelector(".collection-card__designer-face"),
     faceMark: card.querySelector(".collection-card__designer-mark"),
+    faceImage: card.querySelector(".collection-card__designer-image"),
+    faceInitials: card.querySelector(".collection-card__designer-initials"),
     faceCopy: card.querySelector(".collection-card__designer-copy"),
     sticker: card.querySelector("[data-collection-game-sticker]"),
     titleEl: shell.querySelector(".collection-game__title"),
