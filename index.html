@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title data-i18n="page.homeTitle">Sheji</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="source/icons/checkroom.svg" type="image/svg+xml" />
   </head>
   <body id="top">
     <nav class="language-switcher" aria-label="Language" data-language-switcher data-i18n-aria-label="languageSwitcher.label">
@@ -30,6 +31,18 @@
                 </span>
                 <span data-i18n="collection.back">Go back</span>
               </button>
+              <div class="collection-card__designer" hidden>
+                <button
+                  class="collection-card__designer-face"
+                  type="button"
+                  aria-label="Unlock collection mini game"
+                  title="Do not tap the designer"
+                >
+                  <span class="collection-card__designer-mark" aria-hidden="true">DG</span>
+                  <span class="collection-card__designer-copy" data-i18n="collectionGame.hintShort">DO NOT TAP THE DESIGNER</span>
+                  <span class="collection-card__designer-sticker" data-collection-game-sticker hidden>0/5</span>
+                </button>
+              </div>
             </div>
             <div class="collection-card__content">
               <p class="collection-card__eyebrow" data-i18n="collection.lore">collection lore</p>
@@ -51,6 +64,33 @@
                 </svg>
               </span>
             </button>
+            <section
+              class="collection-game"
+              data-collection-game-shell
+              hidden
+              tabindex="-1"
+              aria-hidden="true"
+              aria-label="Collection mini game"
+              data-i18n-aria-label="collectionGame.shellAria"
+            >
+              <header class="collection-game__hud">
+                <div class="collection-game__copy">
+                  <p class="collection-game__title"></p>
+                  <p class="collection-game__score"></p>
+                </div>
+                <p class="collection-game__controls"></p>
+                <button class="collection-game__exit" type="button" data-collection-game-exit data-i18n="collectionGame.exit">Exit</button>
+              </header>
+              <div class="collection-game__stage" tabindex="-1"></div>
+              <div class="collection-game__end" hidden>
+                <p class="collection-game__result"></p>
+                <div class="collection-game__end-actions">
+                  <button class="collection-game__restart" type="button" data-i18n="collectionGame.restart">Restart</button>
+                  <button class="collection-game__end-exit" type="button" data-collection-game-exit data-i18n="collectionGame.exit">Exit</button>
+                </div>
+              </div>
+              <p class="collection-game__live visually-hidden" aria-live="polite"></p>
+            </section>
           </article>
         </template>
 
@@ -97,79 +137,28 @@
             </div>
           </div>
 
-          <div class="search-menu search-menu--compact">
-            <form
-              class="search-menu__surface button button--search"
-              id="home-search-panel"
-              role="search"
-              aria-label="Search"
-              data-i18n-aria-label="nav.search"
-              aria-expanded="false"
-            >
-              <div class="search-menu__slot search-menu__slot--idle">
-                <span class="search-menu__prompt" data-i18n="search.homePrompt">Lemme help you..</span>
-              </div>
-
-              <div
-                class="search-menu__slot search-menu__slot--head search-menu__row"
-              >
-                <input
-                  class="search-menu__input"
-                  type="search"
-                  name="query"
-                  placeholder="Shirt"
-                  data-i18n-placeholder="search.shirtPlaceholder"
-                  autocomplete="off"
-                  tabindex="-1"
-                />
-                <span
-                  class="button-icon-shell button-icon-shell--search"
-                  aria-hidden="true"
-                >
-                  <svg
-                    class="button-icon button-icon--large"
-                    viewBox="0 0 40 40"
-                    focusable="false"
-                  >
-                    <path
-                      d="M18 30C24.627 30 30 24.627 30 18C30 11.373 24.627 6 18 6C11.373 6 6 11.373 6 18C6 24.627 11.373 30 18 30Z"
-                    />
-                    <path d="M27 27L34 34" />
-                  </svg>
-                </span>
-              </div>
-
-              <div class="search-menu__slot search-menu__slot--body">
-                <div class="search-menu__divider"></div>
-                <button class="search-menu__suggestion" type="button">
-                  <span data-i18n="search.suggestionHelp">Lemme help you..</span>
-                  <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-                    <path d="M9 20H31" />
-                    <path d="M22 11L31 20L22 29" />
-                  </svg>
-                </button>
-                <button class="search-menu__suggestion" type="button">
-                  <span data-i18n="search.suggestionHelp">Lemme help you..</span>
-                  <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-                    <path d="M9 20H31" />
-                    <path d="M22 11L31 20L22 29" />
-                  </svg>
-                </button>
-              </div>
-            </form>
-          </div>
-
           <div class="cart-status-menu">
-            <a
-              class="cart-status"
-              href="cart.html"
-              aria-label="Open cart, 0 items"
-              aria-expanded="false"
-            >
-              <img src="source/icons/shopping_cart.svg" alt="" />
-              <span class="cart-status__label" data-i18n="cart.label">Cart</span>
-              <span class="cart-status__count" data-cart-count>0</span>
-            </a>
+            <div class="commerce-status" role="group" aria-label="Shopping and favorites" data-i18n-aria-label="commerce.navigation">
+              <a
+                class="commerce-status__action cart-status"
+                href="cart.html"
+                aria-label="Open cart, 0 items"
+                aria-expanded="false"
+              >
+                <img src="source/icons/shopping_cart.svg" alt="" />
+                <span class="visually-hidden" data-i18n="cart.label">Cart</span>
+                <span class="commerce-status__count" data-cart-count>0</span>
+              </a>
+              <span class="commerce-status__divider" aria-hidden="true"></span>
+              <a
+                class="commerce-status__action favorite-status"
+                href="favorites.html"
+                aria-label="Open favorites, 0 items"
+              >
+                <img src="source/icons/favorite_border.svg" alt="" />
+                <span class="visually-hidden" data-i18n="favorites.label">Favorites</span>
+              </a>
+            </div>
           </div>
         </section>
 
@@ -308,12 +297,15 @@
 
     <script src="js/i18n.js"></script>
     <script src="data/collections.js"></script>
+    <script src="data/collection-games.js"></script>
     <script src="data/products.js"></script>
     <script src="data/events.js"></script>
     <script src="js/merchandising.js"></script>
     <script src="js/motion.js"></script>
     <script src="js/runtime.js"></script>
     <script src="js/collections.js"></script>
+    <script src="js/collection-game-modules.js"></script>
+    <script src="js/collection-games.js"></script>
     <script src="js/catalogue.js"></script>
     <script src="js/collage.js"></script>
     <script src="js/search-menu.js"></script>

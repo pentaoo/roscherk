@@ -27,16 +27,27 @@
         </div>
 
         <div class="cart-status-menu product-detail__cart-status">
-          <a
-            class="cart-status"
-            href="cart.html"
-            aria-label="Open cart, 0 items"
-            aria-expanded="false"
-          >
-            <img src="source/icons/shopping_cart.svg" alt="" />
-            <span class="cart-status__label" data-i18n="cart.label">Cart</span>
-            <span class="cart-status__count" data-cart-count>0</span>
-          </a>
+          <div class="commerce-status" role="group" aria-label="Shopping and favorites" data-i18n-aria-label="commerce.navigation">
+            <a
+              class="commerce-status__action cart-status"
+              href="cart.html"
+              aria-label="Open cart, 0 items"
+              aria-expanded="false"
+            >
+              <img src="source/icons/shopping_cart.svg" alt="" />
+              <span class="visually-hidden" data-i18n="cart.label">Cart</span>
+              <span class="commerce-status__count" data-cart-count>0</span>
+            </a>
+            <span class="commerce-status__divider" aria-hidden="true"></span>
+            <a
+              class="commerce-status__action favorite-status"
+              href="favorites.html"
+              aria-label="Open favorites, 0 items"
+            >
+              <img src="source/icons/favorite_border.svg" alt="" />
+              <span class="visually-hidden" data-i18n="favorites.label">Favorites</span>
+            </a>
+          </div>
         </div>
 
         <div class="product-detail__stage">

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="page.favoritesTitle">Sheji Favorites</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="favorites-page">
+    <nav class="language-switcher" aria-label="Language" data-language-switcher data-i18n-aria-label="languageSwitcher.label">
+      <button class="language-switcher__option" type="button" data-language-option="en" aria-pressed="false" aria-label="English" data-i18n-aria-label="languageSwitcher.en">EN</button>
+      <button class="language-switcher__option" type="button" data-language-option="ru" aria-pressed="false" aria-label="Russian" data-i18n-aria-label="languageSwitcher.ru">RU</button>
+      <button class="language-switcher__option" type="button" data-language-option="zh" aria-pressed="false" aria-label="Chinese language slot" data-i18n-aria-label="languageSwitcher.zh" title="Chinese can be added later" data-i18n-title="languageSwitcher.zhTitle">ZH</button>
+    </nav>
+    <main class="cart-page__main">
+      <section class="cart-detail favorites-detail" aria-labelledby="favorites-title" data-favorites-page>
+        <div class="cart-detail__toolbar">
+          <a class="cart-detail__back" href="index.html#catalogue">
+            <img src="source/icons/west.svg" alt="" />
+            <span data-i18n="collection.back">Go back</span>
+          </a>
+        </div>
+
+        <header class="cart-detail__header">
+          <p class="cart-detail__eyebrow" data-i18n="favorites.eyebrow">liked pieces</p>
+          <h1 id="favorites-title" data-i18n="favorites.title">Favorites</h1>
+          <p class="cart-detail__summary" data-favorites-summary>0 items</p>
+        </header>
+
+        <div class="cart-detail__empty" data-favorites-empty hidden>
+          <p data-i18n="favorites.empty">No favorites yet.</p>
+          <a class="cart-detail__shop-link" href="index.html#catalogue" data-i18n="favorites.findClothes">Find clothes</a>
+        </div>
+
+        <div class="cart-detail__list" data-favorites-list></div>
+      </section>
+    </main>
+
+    <script src="js/i18n.js"></script>
+    <script src="data/collections.js"></script>
+    <script src="data/products.js"></script>
+    <script src="js/merchandising.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/runtime.js"></script>
+    <script src="js/catalogue.js"></script>
+    <script src="js/favorites.js"></script>
+  </body>
+</html>

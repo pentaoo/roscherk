@@ -159,6 +159,7 @@ function renderCollectionCards(menu, collections) {
     const card = fragment.querySelector(".collection-card");
 
     card.dataset.cardIndex = String(index);
+    card.dataset.collectionId = collection.id || "";
     updateCollectionCardContent(card, collection, index);
     window.ShejiI18n?.applyTranslations?.(card);
 
@@ -666,7 +667,7 @@ function initCollectionExperience(menu) {
   const merchandising = window.ShejiRuntime.getMerchandisingData();
   const viewModel = createCollectionViewModel(cards.length);
   const { state } = viewModel;
-  const mobileCollectionQuery = window.matchMedia("(max-width: 767px), (pointer: coarse)");
+  const mobileCollectionQuery = window.matchMedia("(max-width: 767px)");
   const swipeState = {
     pointerId: null,
     startX: 0,
@@ -945,6 +946,10 @@ function initCollectionExperience(menu) {
   };
 
   const closeCard = () => {
+    if (state.expandedCard) {
+      window.ShejiCollectionGames?.closeCardGame?.(state.expandedCard);
+    }
+
     const card = viewModel.beginClose();
     if (!card) {
       return;
@@ -999,7 +1004,9 @@ function initCollectionExperience(menu) {
       if (
         state.phase !== COLLECTION_PHASES.idle ||
         event.target.closest(".collection-card__cta") ||
-        event.target.closest(".collection-card__back")
+        event.target.closest(".collection-card__back") ||
+        event.target.closest(".collection-card__designer-face") ||
+        event.target.closest(".collection-game")
       ) {
         return;
       }
@@ -1046,6 +1053,7 @@ function initCollectionExperience(menu) {
       }
     });
     window.ShejiI18n?.applyTranslations?.(menu);
+    window.ShejiCollectionGames?.refreshLabels?.(menu);
     scheduleStackSync();
   });
 
@@ -1065,6 +1073,7 @@ function initCollectionExperience(menu) {
   });
 
   applySlots();
+  window.ShejiCollectionGames?.initCollectionGames?.(menu);
 
   scheduleStackSync();
 

@@ -17,6 +17,7 @@ const PRICE_FILTERS = [
 ];
 
 const CART_STORAGE_KEY = "sheji-cart";
+const FAVORITES_STORAGE_KEY = "sheji-favorites";
 
 function readStoredCart(productsById) {
   try {
@@ -41,6 +42,32 @@ function writeStoredCart(cart) {
     window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify([...cart.entries()]));
   } catch {
     // Cart still works in memory if storage is unavailable.
+  }
+}
+
+function getDefaultFavorites(products) {
+  return new Set(products.filter((product) => product.liked).map((product) => product.id));
+}
+
+function readStoredFavorites(productsById, products) {
+  try {
+    const storedProductIds = JSON.parse(window.localStorage.getItem(FAVORITES_STORAGE_KEY) || "null");
+
+    if (!Array.isArray(storedProductIds)) {
+      return getDefaultFavorites(products);
+    }
+
+    return new Set(storedProductIds.filter((productId) => productsById.has(productId)));
+  } catch {
+    return getDefaultFavorites(products);
+  }
+}
+
+function writeStoredFavorites(favorites) {
+  try {
+    window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...favorites.values()]));
+  } catch {
+    // Favorites still work in memory if storage is unavailable.
   }
 }
 
@@ -72,7 +99,7 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
     colour: null,
     price: null,
   };
-  const favorites = new Set(products.filter((product) => product.liked).map((product) => product.id));
+  const favorites = readStoredFavorites(productsById, products);
   const cart = readStoredCart(productsById);
   const subscribers = new Set();
 
@@ -180,6 +207,12 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
     },
     getCartTotal() {
       return this.getCartRows().reduce((sum, row) => sum + row.lineTotal, 0);
+    },
+    getFavoriteCount() {
+      return favorites.size;
+    },
+    getFavoriteRows() {
+      return products.filter((product) => favorites.has(product.id));
     },
     getFilterOptions(group) {
       if (group === "size") {
@@ -292,6 +325,7 @@ function createCatalogueCommerce(merchandising = window.ShejiRuntime?.getMerchan
         favorites.add(productId);
       }
 
+      writeStoredFavorites(favorites);
       notify({ type: "favorite", productId });
     },
   };
@@ -452,6 +486,44 @@ function renderCartPopover(popover, cartRows, total) {
   popover.append(totalRow);
 }
 
+function updateCommerceStatus(root, commerce) {
+  const cartButton = root.querySelector?.(".cart-status") || document.querySelector(".cart-status");
+  const favoriteButton = root.querySelector?.(".favorite-status") || document.querySelector(".favorite-status");
+  const cartCount = cartButton?.querySelector("[data-cart-count]") || root.querySelector?.("[data-cart-count]");
+  const cartTotal = commerce.getCartCount();
+  const favoriteTotal = commerce.getFavoriteCount?.() || 0;
+  const formattedCartItems =
+    window.ShejiI18n?.formatCartItemCount?.(cartTotal) ||
+    `${cartTotal} ${cartTotal === 1 ? "item" : "items"}`;
+  const formattedFavoriteItems =
+    window.ShejiI18n?.formatFavoriteItemCount?.(favoriteTotal) ||
+    `${favoriteTotal} ${favoriteTotal === 1 ? "item" : "items"}`;
+  const cartItems = formattedCartItems.replace(`${cartTotal} `, "");
+  const favoriteItems = formattedFavoriteItems.replace(`${favoriteTotal} `, "");
+
+  if (cartCount) {
+    cartCount.textContent = String(cartTotal);
+  }
+
+  cartButton?.setAttribute(
+    "aria-label",
+    window.ShejiI18n?.t?.("cart.open", {
+      count: cartTotal,
+      items: cartItems,
+    }) || `Open cart, ${cartTotal} ${cartTotal === 1 ? "item" : "items"}`,
+  );
+
+  favoriteButton?.setAttribute(
+    "aria-label",
+    window.ShejiI18n?.t?.("favorites.open", {
+      count: favoriteTotal,
+      items: favoriteItems,
+    }) || `Open favorites, ${favoriteTotal} ${favoriteTotal === 1 ? "item" : "items"}`,
+  );
+
+  favoriteButton?.classList.toggle("has-favorites", favoriteTotal > 0);
+}
+
 function setFilterControlOpen(control, isOpen) {
   control.classList.toggle("is-open", isOpen);
   control.querySelector("[data-filter-trigger]")?.setAttribute("aria-expanded", isOpen ? "true" : "false");
@@ -499,7 +571,6 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
   const filterControls = Array.from(catalogue.querySelectorAll("[data-filter-control][data-filter-group]"));
   const searchInput = catalogue.querySelector("[data-catalogue-search]");
   const cartButton = catalogue.querySelector(".cart-status") || document.querySelector(".home-actions .cart-status");
-  const cartCount = cartButton?.querySelector("[data-cart-count]") || catalogue.querySelector("[data-cart-count]");
   const controls = catalogue.querySelector(".catalogue__controls");
   const cartMenu = cartButton?.closest(".cart-status-menu");
   const backLink = catalogue.querySelector(".catalogue__back");
@@ -544,23 +615,7 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
   };
 
   const updateCart = () => {
-    const cartTotal = commerce.getCartCount();
-    const formattedCartItems =
-      window.ShejiI18n?.formatCartItemCount?.(cartTotal) ||
-      `${cartTotal} ${cartTotal === 1 ? "item" : "items"}`;
-    const cartItems = formattedCartItems.replace(`${cartTotal} `, "");
-
-    if (cartCount) {
-      cartCount.textContent = String(cartTotal);
-    }
-
-    cartButton?.setAttribute(
-      "aria-label",
-      window.ShejiI18n?.t?.("cart.open", {
-        count: cartTotal,
-        items: cartItems,
-      }) || `Open cart, ${cartTotal} ${cartTotal === 1 ? "item" : "items"}`,
-    );
+    updateCommerceStatus(cartButton?.closest(".cart-status-menu") || catalogue, commerce);
     renderCartPopover(cartPopover, commerce.getCartRows(), commerce.getCartTotal());
   };
 
@@ -598,7 +653,7 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
   };
 
   commerce.subscribe?.((change) => {
-    if (change.type === "cart") {
+    if (change.type === "cart" || change.type === "favorite") {
       updateCart();
     }
   });
@@ -707,7 +762,7 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
     }
   });
 
-  cartMenu?.addEventListener("pointerenter", () => {
+  cartButton?.addEventListener("pointerenter", () => {
     setCartPreviewOpen(true);
   });
 
@@ -715,7 +770,7 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
     setCartPreviewOpen(false);
   });
 
-  cartMenu?.addEventListener("focusin", () => {
+  cartButton?.addEventListener("focusin", () => {
     setCartPreviewOpen(true);
   });
 
@@ -732,4 +787,5 @@ window.ShejiCatalogue = {
   createCatalogueCommerce,
   formatPrice,
   initCatalogue,
+  updateCommerceStatus,
 };

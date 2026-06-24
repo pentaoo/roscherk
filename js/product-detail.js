@@ -64,7 +64,6 @@ function initProductDetail(detail, commerce) {
   const sizeTrigger = detail.querySelector("[data-size-trigger]");
   const sizeLabel = detail.querySelector("[data-size-label]");
   const cartButton = detail.querySelector(".cart-status");
-  const cartCount = detail.querySelector("[data-cart-count]");
 
   if (!products.length || !image || !addButton || !recommendations) {
     return null;
@@ -87,6 +86,7 @@ function initProductDetail(detail, commerce) {
     sizeSelector?.classList.toggle("is-open", isOpen);
     sizeTrigger?.setAttribute("aria-expanded", isOpen ? "true" : "false");
   };
+  const closesSizeSelectorOnPointerLeave = () => !window.matchMedia("(max-width: 1279px)").matches;
 
   const selectSize = (size) => {
     selectedSize = size;
@@ -169,21 +169,7 @@ function initProductDetail(detail, commerce) {
   };
 
   const updateCartStatus = () => {
-    const cartTotal = commerce?.getCartCount?.() || 0;
-    const formattedCartItems =
-      window.ShejiI18n?.formatCartItemCount?.(cartTotal) ||
-      `${cartTotal} ${cartTotal === 1 ? "item" : "items"}`;
-    const cartItems = formattedCartItems.replace(`${cartTotal} `, "");
-
-    if (cartCount) {
-      cartCount.textContent = String(cartTotal);
-    }
-
-    cartButton?.setAttribute(
-      "aria-label",
-      window.ShejiI18n?.t?.("cart.open", { count: cartTotal, items: cartItems }) ||
-        `Open cart, ${cartTotal} ${cartTotal === 1 ? "item" : "items"}`,
-    );
+    window.ShejiCatalogue?.updateCommerceStatus?.(cartButton?.closest(".cart-status-menu") || detail, commerce);
   };
 
   const selectProduct = (productId, { scroll = false } = {}) => {
@@ -208,7 +194,7 @@ function initProductDetail(detail, commerce) {
   });
 
   commerce?.subscribe?.((change) => {
-    if (change.type === "cart") {
+    if (change.type === "cart" || change.type === "favorite") {
       updateCartStatus();
     }
   });
@@ -223,6 +209,10 @@ function initProductDetail(detail, commerce) {
   });
 
   sizeSelector?.addEventListener("mouseleave", () => {
+    if (!closesSizeSelectorOnPointerLeave()) {
+      return;
+    }
+
     setSizeSelectorOpen(false);
   });
 

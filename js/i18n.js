@@ -19,6 +19,7 @@ const SHEJI_TRANSLATIONS = {
       homeTitle: "Sheji",
       productTitle: "Sheji Product",
       cartTitle: "Sheji Cart",
+      favoritesTitle: "Sheji Favorites",
       showsTitle: "Sheji Shows",
       productTitleWithName: "{name} - Sheji",
       showTitleWithName: "{name} - Sheji Shows",
@@ -38,6 +39,56 @@ const SHEJI_TRANSLATIONS = {
       stylingCaption: "{title} styling reference. {caption}",
       fullDrop:
         "{description} The full drop keeps the same visual language across product shots, labels, trims, and the way each piece sits on the body.",
+    },
+    collectionGame: {
+      shellAria: "Collection mini game",
+      hint: "Do not tap the designer",
+      hintShort: "DO NOT TAP THE DESIGNER",
+      progress: "{count}/{total}",
+      playAgain: "PLAY AGAIN",
+      exit: "Exit",
+      restart: "Restart",
+      resultScore: "Score {score}",
+      unavailable: "GAME MODULE MISSING",
+      startedLive: "Mini game started.",
+      unlockedLive: "Mini game unlocked.",
+      overLive: "Mini game over.",
+      fruity: {
+        title: "Label Bird",
+        unlockAria: "Unlock Fruity mini game",
+        scoreLabel: "LOOK VALUE",
+        controls: "Tap, click, or Space to flap. Avoid scanner tags.",
+        gameOver: "ITEM MISLABELED",
+        restart: "RE-STICK",
+      },
+      stone: {
+        title: "Erosion Pong",
+        unlockAria: "Unlock Stone mini game",
+        scoreLabel: "EROSION INDEX",
+        controls: "Move with arrows or pointer. Keep the slab alive.",
+        gameOver: "SLAB DROPPED",
+      },
+      water: {
+        title: "Drip Runner",
+        unlockAria: "Unlock Water mini game",
+        scoreLabel: "FLOW",
+        controls: "Tap or Space to jump. Down ducks under heat.",
+        gameOver: "DRIED OUT",
+      },
+      bloom: {
+        title: "Petal Tennis",
+        unlockAria: "Unlock Bloom mini game",
+        scoreLabel: "RALLY BLOOM",
+        controls: "Move with pointer or Up/Down. Return the pollen ball.",
+        gameOver: "PETAL FAULT",
+      },
+      chrome: {
+        title: "Mirror Lane",
+        unlockAria: "Unlock Chrome mini game",
+        scoreLabel: "NOA",
+        controls: "Switch lanes with arrows or tap a lane. Collect shine.",
+        gameOver: "REFLECTION BROKEN",
+      },
     },
     collectionMedia: {
       sunglasses: {
@@ -79,6 +130,9 @@ const SHEJI_TRANSLATIONS = {
       allClothing: "All Clothing",
       catalogueControls: "Catalogue controls",
     },
+    commerce: {
+      navigation: "Shopping and favorites",
+    },
     search: {
       homePrompt: "Lemme help you..",
       cataloguePrompt: "Find the weird piece..",
@@ -114,6 +168,19 @@ const SHEJI_TRANSLATIONS = {
       addOne: "Add one {name}",
       popoverLine: "{name} x {quantity}",
       itemMeta: "{colour} / {sizes}",
+    },
+    favorites: {
+      label: "Favorites",
+      title: "Favorites",
+      eyebrow: "liked pieces",
+      open: "Open favorites, {count} {items}",
+      itemOne: "item",
+      itemFew: "items",
+      itemMany: "items",
+      empty: "No favorites yet.",
+      findClothes: "Find clothes",
+      remove: "Remove from favorites",
+      removeNamed: "Remove {name} from favorites",
     },
     product: {
       detail: "Product detail",
@@ -179,6 +246,7 @@ const SHEJI_TRANSLATIONS = {
       homeTitle: "Sheji",
       productTitle: "Sheji: товар",
       cartTitle: "Sheji: корзина",
+      favoritesTitle: "Sheji: избранное",
       showsTitle: "Sheji: показы",
       productTitleWithName: "{name} - Sheji",
       showTitleWithName: "{name} - показы Sheji",
@@ -198,6 +266,56 @@ const SHEJI_TRANSLATIONS = {
       stylingCaption: "{title}: стайлинг. {caption}",
       fullDrop:
         "{description} Весь дроп удерживает один визуальный язык: в съемке вещей, ярлыках, отделке и в том, как каждая вещь сидит на теле.",
+    },
+    collectionGame: {
+      shellAria: "Мини-игра коллекции",
+      hint: "Не трогай дизайнера",
+      hintShort: "НЕ ТРОГАЙ ДИЗАЙНЕРА",
+      progress: "{count}/{total}",
+      playAgain: "ИГРАТЬ ЕЩЕ",
+      exit: "Выйти",
+      restart: "Заново",
+      resultScore: "Счет {score}",
+      unavailable: "ИГРОВОЙ МОДУЛЬ ПОТЕРЯН",
+      startedLive: "Мини-игра запущена.",
+      unlockedLive: "Мини-игра открыта.",
+      overLive: "Мини-игра закончена.",
+      fruity: {
+        title: "Label Bird",
+        unlockAria: "Открыть мини-игру Fruity",
+        scoreLabel: "LOOK VALUE",
+        controls: "Тап, клик или Space: взлет. Уходи от сканеров.",
+        gameOver: "ITEM MISLABELED",
+        restart: "RE-STICK",
+      },
+      stone: {
+        title: "Erosion Pong",
+        unlockAria: "Открыть мини-игру Stone",
+        scoreLabel: "EROSION INDEX",
+        controls: "Стрелки или pointer двигают плиту. Не урони сляб.",
+        gameOver: "SLAB DROPPED",
+      },
+      water: {
+        title: "Drip Runner",
+        unlockAria: "Открыть мини-игру Water",
+        scoreLabel: "FLOW",
+        controls: "Тап или Space: прыжок. Вниз: пригнуться.",
+        gameOver: "DRIED OUT",
+      },
+      bloom: {
+        title: "Petal Tennis",
+        unlockAria: "Открыть мини-игру Bloom",
+        scoreLabel: "RALLY BLOOM",
+        controls: "Pointer или Up/Down двигают лепесток. Отбивай пыльцу.",
+        gameOver: "PETAL FAULT",
+      },
+      chrome: {
+        title: "Mirror Lane",
+        unlockAria: "Открыть мини-игру Chrome",
+        scoreLabel: "NOA",
+        controls: "Стрелки или тап по полосе. Собирай блеск.",
+        gameOver: "REFLECTION BROKEN",
+      },
     },
     collectionMedia: {
       sunglasses: {
@@ -239,6 +357,9 @@ const SHEJI_TRANSLATIONS = {
       allClothing: "Вся одежда",
       catalogueControls: "Управление каталогом",
     },
+    commerce: {
+      navigation: "Корзина и избранное",
+    },
     search: {
       homePrompt: "Помогу найти вещь..",
       cataloguePrompt: "Найди странную вещь..",
@@ -273,6 +394,19 @@ const SHEJI_TRANSLATIONS = {
       addOne: "Добавить один {name}",
       popoverLine: "{name} x {quantity}",
       itemMeta: "{colour} / {sizes}",
+    },
+    favorites: {
+      label: "Избранное",
+      title: "Избранное",
+      eyebrow: "понравившиеся вещи",
+      open: "Открыть избранное, {count} {items}",
+      itemOne: "товар",
+      itemFew: "товара",
+      itemMany: "товаров",
+      empty: "Избранного пока нет.",
+      findClothes: "Найти одежду",
+      remove: "Убрать из избранного",
+      removeNamed: "Убрать {name} из избранного",
     },
     product: {
       detail: "Детали товара",
@@ -661,6 +795,11 @@ function formatCartItemCount(count) {
   return `${count} ${t(key)}`;
 }
 
+function formatFavoriteItemCount(count) {
+  const key = getPluralKey(count, "favorites.itemOne", "favorites.itemFew", "favorites.itemMany");
+  return `${count} ${t(key)}`;
+}
+
 function formatDate(value) {
   const parsedDate = new Date(value);
 
@@ -794,6 +933,7 @@ window.ShejiI18n = {
   config: SHEJI_I18N_CONFIG,
   detectLanguage,
   formatCartItemCount,
+  formatFavoriteItemCount,
   formatDate,
   formatPrice,
   getBrowserLanguage,

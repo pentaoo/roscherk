@@ -5,6 +5,7 @@ function initSearchMenu(searchMenu) {
 
   const searchDuration = () => window.ShejiMotion.durationMs("--duration-search");
   const focusDelay = () => (window.ShejiMotion.reducedMotion ? 0 : 80);
+  const closesOnPointerLeave = () => !window.matchMedia("(max-width: 1279px)").matches;
 
   const openSearch = () => {
     window.clearTimeout(closeTimer);
@@ -49,6 +50,10 @@ function initSearchMenu(searchMenu) {
   });
 
   surface?.addEventListener("mouseleave", () => {
+    if (!closesOnPointerLeave()) {
+      return;
+    }
+
     if (searchMenu.classList.contains("is-open")) {
       closeSearch();
     }
