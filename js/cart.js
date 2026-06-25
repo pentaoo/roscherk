@@ -8,11 +8,13 @@
   window.ShejiRuntime?.init?.();
 
   const commerce = window.ShejiCatalogue.createCatalogueCommerce();
+  const content = root.querySelector("[data-cart-content]");
   const list = root.querySelector("[data-cart-list]");
   const empty = root.querySelector("[data-cart-empty]");
-  const footer = root.querySelector("[data-cart-footer]");
   const summary = root.querySelector("[data-cart-summary]");
   const total = root.querySelector("[data-cart-total]");
+  const checkoutForm = root.querySelector("[data-cart-checkout-form]");
+  const checkoutStatus = root.querySelector("[data-cart-checkout-status]");
   const formatPrice = window.ShejiCatalogue.formatPrice || window.ShejiI18n?.formatPrice || ((price) => `${price}$`);
 
   function getProductName(product) {
@@ -140,8 +142,21 @@
 
     const hasRows = rows.length > 0;
     empty.hidden = hasRows;
-    footer.hidden = !hasRows;
+    content.hidden = !hasRows;
+
+    if (!hasRows && checkoutStatus) {
+      checkoutStatus.textContent = "";
+    }
   }
+
+  checkoutForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (checkoutStatus) {
+      checkoutStatus.textContent = window.ShejiI18n?.t?.("cart.checkoutReady") ||
+        "Order details are ready. Payment provider connection is next.";
+    }
+  });
 
   root.addEventListener("click", (event) => {
     const button = event.target.closest("[data-cart-action]");

@@ -9,17 +9,19 @@
   <body class="cart-page">
     <main class="cart-page__main">
       <section class="cart-detail" aria-labelledby="cart-title" data-cart-page>
-        <div class="cart-detail__toolbar">
-          <a class="cart-detail__back" href="index.html#catalogue">
-            <img src="source/icons/west.svg" alt="" />
-            <span data-i18n="collection.back">Go back</span>
-          </a>
-        </div>
+        <header class="cart-detail__hero">
+          <div class="cart-detail__toolbar">
+            <a class="cart-detail__back" href="index.html#catalogue">
+              <img src="source/icons/west.svg" alt="" />
+              <span data-i18n="collection.back">Go back</span>
+            </a>
+          </div>
 
-        <header class="cart-detail__header">
-          <p class="cart-detail__eyebrow" data-i18n="cart.eyebrow">sheji bag</p>
-          <h1 id="cart-title" data-i18n="cart.title">Cart</h1>
-          <p class="cart-detail__summary" data-cart-summary>0 items</p>
+          <div class="cart-detail__header">
+            <p class="cart-detail__eyebrow" data-i18n="cart.eyebrow">sheji bag</p>
+            <h1 id="cart-title" data-i18n="cart.title">Cart</h1>
+            <p class="cart-detail__summary" data-cart-summary>0 items</p>
+          </div>
         </header>
 
         <div class="cart-detail__empty" data-cart-empty hidden>
@@ -27,17 +29,77 @@
           <a class="cart-detail__shop-link" href="index.html#catalogue" data-i18n="cart.findClothes">Find clothes</a>
         </div>
 
-        <div class="cart-detail__list" data-cart-list></div>
+        <div class="cart-detail__body" data-cart-content hidden>
+          <section class="cart-detail__items" aria-label="Cart items" data-i18n-aria-label="cart.itemsAria">
+            <div class="cart-detail__list" data-cart-list></div>
 
-        <footer class="cart-detail__footer" data-cart-footer hidden>
-          <button class="cart-detail__clear" type="button" data-cart-action="clear">
-            <span data-i18n="cart.clear">Clear cart</span>
-          </button>
-          <p class="cart-detail__total">
-            <span data-i18n="cart.total">Total</span>
-            <strong data-cart-total>0$</strong>
-          </p>
-        </footer>
+            <footer class="cart-detail__footer">
+              <button class="cart-detail__clear" type="button" data-cart-action="clear">
+                <span data-i18n="cart.clear">Clear cart</span>
+              </button>
+              <p class="cart-detail__total">
+                <span data-i18n="cart.total">Total</span>
+                <strong data-cart-total>0$</strong>
+              </p>
+            </footer>
+          </section>
+
+          <aside class="cart-checkout" aria-labelledby="checkout-title">
+            <div class="cart-checkout__header">
+              <p class="cart-checkout__eyebrow" data-i18n="cart.checkoutEyebrow">checkout details</p>
+              <h2 id="checkout-title" data-i18n="cart.checkoutTitle">Delivery and payment</h2>
+              <p data-i18n="cart.checkoutHint">Leave contact details and card info to finish the order.</p>
+            </div>
+
+            <form class="cart-checkout__form" data-cart-checkout-form>
+              <div class="cart-checkout__section">
+                <h3 data-i18n="cart.contactTitle">Contact</h3>
+                <div class="cart-checkout__fields cart-checkout__fields--split">
+                  <label class="cart-checkout__field">
+                    <span data-i18n="cart.firstName">Name</span>
+                    <input type="text" name="first-name" autocomplete="given-name" required />
+                  </label>
+                  <label class="cart-checkout__field">
+                    <span data-i18n="cart.lastName">Surname</span>
+                    <input type="text" name="last-name" autocomplete="family-name" required />
+                  </label>
+                </div>
+                <label class="cart-checkout__field">
+                  <span data-i18n="cart.phone">Phone number</span>
+                  <input type="tel" name="phone" autocomplete="tel" inputmode="tel" required />
+                </label>
+                <label class="cart-checkout__field">
+                  <span data-i18n="cart.address">Address</span>
+                  <textarea name="address" rows="3" autocomplete="street-address" required></textarea>
+                </label>
+              </div>
+
+              <div class="cart-checkout__section cart-checkout__section--payment">
+                <h3 data-i18n="cart.cardPayment">Card payment</h3>
+                <label class="cart-checkout__field">
+                  <span data-i18n="cart.cardNumber">Card number</span>
+                  <input type="text" name="card-number" autocomplete="cc-number" inputmode="numeric" placeholder="0000 0000 0000 0000" data-i18n-placeholder="cart.cardNumberPlaceholder" required />
+                </label>
+                <div class="cart-checkout__fields cart-checkout__fields--card">
+                  <label class="cart-checkout__field">
+                    <span data-i18n="cart.cardExpiry">Expiry</span>
+                    <input type="text" name="card-expiry" autocomplete="cc-exp" inputmode="numeric" placeholder="MM / YY" data-i18n-placeholder="cart.cardExpiryPlaceholder" required />
+                  </label>
+                  <label class="cart-checkout__field">
+                    <span data-i18n="cart.cardCvc">CVC</span>
+                    <input type="text" name="card-cvc" autocomplete="cc-csc" inputmode="numeric" placeholder="123" data-i18n-placeholder="cart.cardCvcPlaceholder" required />
+                  </label>
+                </div>
+              </div>
+
+              <button class="cart-checkout__submit" type="submit">
+                <img src="source/icons/payment.svg" alt="" />
+                <span data-i18n="cart.payByCard">Pay by card</span>
+              </button>
+              <p class="cart-checkout__status" data-cart-checkout-status aria-live="polite"></p>
+            </form>
+          </aside>
+        </div>
       </section>
     </main>
 

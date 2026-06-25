@@ -650,6 +650,8 @@ function createCollectionGameState(card, collection, config) {
 
   shell.setAttribute("aria-hidden", "true");
   shell.setAttribute("tabindex", "-1");
+  shell.classList.add(`collection-game--${config.collectionId}`);
+  state.stage?.classList.add(`collection-game__stage--${config.collectionId}`);
 
   return state;
 }

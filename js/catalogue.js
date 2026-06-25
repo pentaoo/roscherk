@@ -529,6 +529,15 @@ function setFilterControlOpen(control, isOpen) {
   control.querySelector("[data-filter-trigger]")?.setAttribute("aria-expanded", isOpen ? "true" : "false");
 }
 
+function scrollToExpandedCollectionCard() {
+  const target = document.querySelector(".collection-card.is-expanded") || document.querySelector(".hero-stage") || document.getElementById("top");
+
+  target?.scrollIntoView({
+    behavior: window.ShejiMotion?.reducedMotion ? "auto" : "smooth",
+    block: "start",
+  });
+}
+
 function renderFilterOptions(control, commerce, render) {
   const group = control.dataset.filterGroup;
   const trigger = control.querySelector("[data-filter-trigger]");
@@ -647,7 +656,7 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
     backLink?.setAttribute(
       "aria-label",
       activeCollection
-        ? window.ShejiI18n?.t?.("nav.allClothing") || "Back to all clothing"
+        ? window.ShejiI18n?.t?.("nav.backToCollection") || "Back to collection"
         : window.ShejiI18n?.t?.("nav.backToTop") || defaultHeading.backLabel,
     );
   };
@@ -701,8 +710,7 @@ function initCatalogue(catalogue, commerce = createCatalogueCommerce()) {
 
     event.preventDefault();
     event.stopPropagation();
-    commerce.setActiveCollection(null);
-    render();
+    scrollToExpandedCollectionCard();
   });
 
   filterControls.forEach((control) => {
