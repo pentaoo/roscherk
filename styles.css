@@ -1449,8 +1449,16 @@ html[lang="ru"] .collection-card__description {
   pointer-events: none;
 }
 
+body.collection-game-open .home-actions,
+body.collection-game-open .language-switcher,
+body.collection-game-open .home-catalogue-link {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .collection-game {
   --collection-game-accent: var(--pink);
+  --collection-game-accent-text: var(--black);
   --collection-game-secondary: var(--green);
   --collection-game-paper: var(--yellow-light);
   position: absolute;
@@ -1487,6 +1495,7 @@ html[lang="ru"] .collection-card__description {
   padding: 8px 12px 10px;
   border: 4px solid var(--black);
   background: var(--collection-game-accent);
+  color: var(--collection-game-accent-text);
   font-size: 18px;
   text-align: center;
   transform: rotate(9deg);
@@ -1513,6 +1522,7 @@ html[lang="ru"] .collection-card__description {
 
 .collection-game--stone {
   --collection-game-accent: var(--black);
+  --collection-game-accent-text: var(--yellow);
   --collection-game-secondary: var(--green);
   --collection-game-paper: var(--yellow-light);
 }
@@ -1531,6 +1541,7 @@ html[lang="ru"] .collection-card__description {
 
 .collection-game--chrome {
   --collection-game-accent: var(--black);
+  --collection-game-accent-text: var(--yellow);
   --collection-game-secondary: var(--pink);
   --collection-game-paper: #ffffff;
 }

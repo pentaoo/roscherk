@@ -343,6 +343,7 @@ function openCollectionGame(state, { isReplay = false } = {}) {
 
   state.phase = "opening";
   activeGameState = state;
+  document.body.classList.add("collection-game-open");
   state.card.classList.remove("is-game-arming");
   state.card.classList.add("is-game-opening");
   state.shell.hidden = false;
@@ -389,6 +390,7 @@ function closeCollectionGame(state, { focusFace = true } = {}) {
 
   if (activeGameState === state) {
     activeGameState = null;
+    document.body.classList.remove("collection-game-open");
   }
 
   if (hadActiveShell) {
