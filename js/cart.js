@@ -151,11 +151,7 @@
 
   checkoutForm?.addEventListener("submit", (event) => {
     event.preventDefault();
-
-    if (checkoutStatus) {
-      checkoutStatus.textContent = window.ShejiI18n?.t?.("cart.checkoutReady") ||
-        "Order details are ready. Payment provider connection is next.";
-    }
+    window.location.assign("404.html?from=checkout");
   });
 
   root.addEventListener("click", (event) => {

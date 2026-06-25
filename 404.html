@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="page.notFoundTitle">Sheji 404</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="source/icons/checkroom.svg" type="image/svg+xml" />
+  </head>
+  <body class="not-found-page">
+    <nav class="language-switcher language-switcher--static" aria-label="Language" data-language-switcher data-i18n-aria-label="languageSwitcher.label">
+      <button class="language-switcher__option" type="button" data-language-option="en" aria-pressed="false" aria-label="English" data-i18n-aria-label="languageSwitcher.en">EN</button>
+      <button class="language-switcher__option" type="button" data-language-option="ru" aria-pressed="false" aria-label="Russian" data-i18n-aria-label="languageSwitcher.ru">RU</button>
+    </nav>
+
+    <main class="not-found" aria-labelledby="not-found-title">
+      <section class="not-found__panel">
+        <p class="not-found__eyebrow" data-i18n="notFound.eyebrow">payment provider missing</p>
+        <h1 id="not-found-title">404</h1>
+        <p class="not-found__statement" data-i18n="notFound.statement">Your card tried to enter a room that does not exist.</p>
+      </section>
+
+      <section class="not-found__copy" aria-label="Checkout error" data-i18n-aria-label="notFound.copyAria">
+        <div class="not-found__badge" aria-hidden="true">
+          <span>NO</span>
+          <span>CHECKOUT</span>
+        </div>
+        <div class="not-found__message">
+          <p data-i18n="notFound.message">The bag is real. The payment tunnel is not. Keep the cart, go back, or keep hunting clothes.</p>
+          <div class="not-found__actions">
+            <a class="not-found__action not-found__action--primary" href="cart.html" data-i18n="notFound.backToCart">Back to cart</a>
+            <a class="not-found__action not-found__action--secondary" href="index.html#catalogue" data-i18n="cart.findClothes">Find clothes</a>
+          </div>
+        </div>
+      </section>
+
+      <p class="not-found__ticker" aria-hidden="true">DO NOT PAY THE DESIGNER / DO NOT PAY THE DESIGNER / DO NOT PAY THE DESIGNER</p>
+    </main>
+
+    <script src="js/i18n.js"></script>
+  </body>
+</html>

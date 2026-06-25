@@ -6,6 +6,8 @@ Sheji - статический fashion e-commerce сайт с характеро
 
 [Открыть GitHub Pages](https://pentaoo.github.io/roscherk/)
 
+[Как в проекте использовалась нейросеть](https://pentaoo.github.io/roscherk/ai-usage.md)
+
 ## Что Это
 
 Sheji сделан как storefront без backend и без сборщика: обычные `HTML`, `CSS` и vanilla `JavaScript`, но с ощущением полноценного магазина.

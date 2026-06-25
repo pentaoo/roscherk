@@ -21,6 +21,7 @@ const SHEJI_TRANSLATIONS = {
       cartTitle: "Sheji Cart",
       favoritesTitle: "Sheji Favorites",
       showsTitle: "Sheji Shows",
+      notFoundTitle: "Sheji 404",
       productTitleWithName: "{name} - Sheji",
       showTitleWithName: "{name} - Sheji Shows",
     },
@@ -189,6 +190,13 @@ const SHEJI_TRANSLATIONS = {
       payByCard: "Pay by card",
       checkoutReady: "Order details are ready. Payment provider connection is next.",
     },
+    notFound: {
+      eyebrow: "payment provider missing",
+      statement: "Your card tried to enter a room that does not exist.",
+      copyAria: "Checkout error",
+      message: "The bag is real. The payment tunnel is not. Keep the cart, go back, or keep hunting clothes.",
+      backToCart: "Back to cart",
+    },
     favorites: {
       label: "Favorites",
       title: "Favorites",
@@ -268,6 +276,7 @@ const SHEJI_TRANSLATIONS = {
       cartTitle: "Sheji: корзина",
       favoritesTitle: "Sheji: избранное",
       showsTitle: "Sheji: показы",
+      notFoundTitle: "Sheji 404",
       productTitleWithName: "{name} - Sheji",
       showTitleWithName: "{name} - показы Sheji",
     },
@@ -434,6 +443,13 @@ const SHEJI_TRANSLATIONS = {
       cardCvcPlaceholder: "123",
       payByCard: "Оплатить картой",
       checkoutReady: "Данные заказа готовы. Следующий шаг - подключение платежного провайдера.",
+    },
+    notFound: {
+      eyebrow: "платежный провайдер отсутствует",
+      statement: "Карта попыталась войти в комнату, которой нет.",
+      copyAria: "Ошибка оплаты",
+      message: "Корзина настоящая. Платежный туннель - нет. Сохрани корзину, вернись назад или продолжай искать вещи.",
+      backToCart: "Назад в корзину",
     },
     favorites: {
       label: "Избранное",
