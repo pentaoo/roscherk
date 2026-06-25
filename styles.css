@@ -1444,20 +1444,94 @@ html[lang="ru"] .collection-card__description {
 }
 
 .collection-game {
+  --collection-game-accent: var(--pink);
+  --collection-game-secondary: var(--green);
+  --collection-game-paper: var(--yellow-light);
   position: absolute;
   inset: 0;
   z-index: 8;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
+  padding: 18px;
   overflow: hidden;
-  background: var(--yellow);
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.08) 0 2px, transparent 2px 34px),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.08) 0 2px, transparent 2px 34px),
+    var(--yellow);
   color: var(--black);
   outline: 0;
 }
 
+.collection-game::before,
+.collection-game::after {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  font-weight: 600;
+  line-height: 0.85;
+  text-transform: uppercase;
+}
+
+.collection-game::before {
+  content: "SHEJI PLAY TEST / NO DISCOUNT / NO RULES";
+  top: 10px;
+  right: -62px;
+  width: 300px;
+  padding: 8px 12px 10px;
+  border: 4px solid var(--black);
+  background: var(--collection-game-accent);
+  font-size: 18px;
+  text-align: center;
+  transform: rotate(9deg);
+}
+
+.collection-game::after {
+  content: "";
+  right: 16px;
+  bottom: 16px;
+  width: 96px;
+  height: 96px;
+  border: 5px solid var(--black);
+  background:
+    linear-gradient(90deg, var(--black) 0 8px, transparent 8px 16px) 0 0 / 16px 16px,
+    var(--collection-game-secondary);
+  opacity: 0.95;
+}
+
+.collection-game--fruity {
+  --collection-game-accent: var(--pink);
+  --collection-game-secondary: var(--green);
+  --collection-game-paper: #fff2a6;
+}
+
+.collection-game--stone {
+  --collection-game-accent: var(--black);
+  --collection-game-secondary: var(--green);
+  --collection-game-paper: var(--yellow-light);
+}
+
+.collection-game--water {
+  --collection-game-accent: var(--green);
+  --collection-game-secondary: var(--pink);
+  --collection-game-paper: #fff1f9;
+}
+
+.collection-game--bloom {
+  --collection-game-accent: var(--pink);
+  --collection-game-secondary: var(--yellow-light);
+  --collection-game-paper: #ffffff;
+}
+
+.collection-game--chrome {
+  --collection-game-accent: var(--black);
+  --collection-game-secondary: var(--pink);
+  --collection-game-paper: #ffffff;
+}
+
 .collection-game__hud {
+  position: relative;
+  z-index: 1;
   display: grid;
   min-height: 108px;
   grid-template-columns: minmax(0, 1fr) minmax(150px, 230px) auto;
@@ -1472,7 +1546,8 @@ html[lang="ru"] .collection-card__description {
 .collection-game__end-exit,
 .collection-game__result {
   border: 4px solid var(--black);
-  background: var(--yellow);
+  box-shadow: 6px 6px 0 var(--black);
+  background: var(--collection-game-paper);
   color: var(--black);
 }
 
@@ -1481,6 +1556,9 @@ html[lang="ru"] .collection-card__description {
   align-content: center;
   gap: 4px;
   padding: 12px 16px 14px;
+  background:
+    linear-gradient(90deg, var(--collection-game-accent) 0 12px, transparent 12px),
+    var(--collection-game-paper);
 }
 
 .collection-game__title,
@@ -1500,17 +1578,21 @@ html[lang="ru"] .collection-card__description {
 .collection-game__score {
   width: fit-content;
   padding: 4px 8px 6px;
-  background: var(--green);
+  border: 3px solid var(--black);
+  background: var(--collection-game-secondary);
   font-size: 24px;
   font-weight: 500;
   line-height: 0.95;
+  box-shadow: 3px 3px 0 var(--black);
 }
 
 .collection-game__controls {
   display: grid;
   align-content: center;
   padding: 12px 14px 14px;
-  background: var(--yellow-light);
+  background:
+    repeating-linear-gradient(-8deg, transparent 0 10px, rgba(0, 0, 0, 0.08) 10px 12px),
+    var(--collection-game-paper);
   font-size: 18px;
   font-weight: 500;
   line-height: 1.02;
@@ -1524,7 +1606,8 @@ html[lang="ru"] .collection-card__description {
   align-items: center;
   justify-content: center;
   padding: 0 20px 4px;
-  background: var(--green);
+  background: var(--collection-game-secondary);
+  box-shadow: 6px 6px 0 var(--black);
   cursor: pointer;
   font-size: 28px;
   font-weight: 500;
@@ -1544,16 +1627,69 @@ html[lang="ru"] .collection-card__description {
 
 .collection-game__stage {
   position: relative;
+  z-index: 1;
   min-height: 320px;
   flex: 1 1 auto;
   overflow: hidden;
   border: 6px solid var(--black);
-  background: var(--yellow);
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 0 4px, transparent 4px 40px),
+    var(--yellow);
+  box-shadow: 10px 10px 0 var(--black);
   touch-action: none;
   outline: 0;
 }
 
+.collection-game__stage::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  z-index: 1;
+  border: 3px solid var(--black);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.collection-game__stage::after {
+  content: "SHEJI ARCADE";
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 1;
+  padding: 5px 9px 7px;
+  border: 3px solid var(--black);
+  background: var(--collection-game-accent);
+  pointer-events: none;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.collection-game__stage--fruity::after {
+  content: "FRUIT LABEL TEST";
+}
+
+.collection-game__stage--stone::after {
+  content: "STONE IMPACT LAB";
+  color: var(--yellow);
+}
+
+.collection-game__stage--water::after {
+  content: "WATER LEAK RUN";
+}
+
+.collection-game__stage--bloom::after {
+  content: "BLOOM COURT";
+}
+
+.collection-game__stage--chrome::after {
+  content: "CHROME LANE";
+  color: var(--yellow);
+}
+
 .collection-game__canvas {
+  position: relative;
   display: block;
   width: 100%;
   height: 100%;
@@ -1562,14 +1698,16 @@ html[lang="ru"] .collection-card__description {
 .collection-game__end {
   position: absolute;
   inset: auto 24px 24px;
-  z-index: 2;
+  z-index: 3;
   display: grid;
   gap: 10px;
 }
 
 .collection-game__result {
   padding: 16px 18px 18px;
-  background: var(--pink);
+  background:
+    linear-gradient(90deg, var(--collection-game-secondary) 0 18px, transparent 18px),
+    var(--pink);
   font-size: clamp(32px, 6vw, 64px);
   font-weight: 600;
   line-height: 0.9;
@@ -5865,6 +6003,22 @@ html[lang="ru"] .filter-control--colour .filter-control__option {
     padding: 10px;
   }
 
+  .collection-game::before {
+    top: 6px;
+    right: -94px;
+    width: 280px;
+    padding: 6px 10px 8px;
+    font-size: 14px;
+  }
+
+  .collection-game::after {
+    right: 10px;
+    bottom: 10px;
+    width: 58px;
+    height: 58px;
+    border-width: 4px;
+  }
+
   .collection-game__hud {
     min-height: 0;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -5901,6 +6055,20 @@ html[lang="ru"] .filter-control--colour .filter-control__option {
   .collection-game__stage {
     min-height: 320px;
     border-width: 4px;
+    box-shadow: 5px 5px 0 var(--black);
+  }
+
+  .collection-game__stage::before {
+    inset: 7px;
+    border-width: 2px;
+  }
+
+  .collection-game__stage::after {
+    top: 12px;
+    left: 12px;
+    padding: 4px 7px 6px;
+    border-width: 2px;
+    font-size: 12px;
   }
 
   .collection-game__end {
