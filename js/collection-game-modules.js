@@ -706,8 +706,8 @@ function createDripRunnerGame() {
   const draw = () => {
     const { context: ctx, size } = surface;
     const { width, height } = size;
-    ctx.fillStyle = SHEJI_GAME_COLORS.yellow;
-    ctx.fillRect(0, 0, width, height);
+    drawShejiPrintPattern(ctx, width, height, ["DRIP", "RUN", "WET", "DROP"], SHEJI_GAME_COLORS.green);
+    drawShejiStageFrame(ctx, width, height, "WATER 03", SHEJI_GAME_COLORS.pink);
 
     ctx.strokeStyle = SHEJI_GAME_COLORS.black;
     ctx.lineWidth = 3;
@@ -907,8 +907,7 @@ function createPetalTennisGame() {
   const draw = () => {
     const { context: ctx, size } = surface;
     const { width, height } = size;
-    ctx.fillStyle = SHEJI_GAME_COLORS.yellow;
-    ctx.fillRect(0, 0, width, height);
+    drawShejiPrintPattern(ctx, width, height, ["BLOOM", "CUT", "PETAL", "TAG"], SHEJI_GAME_COLORS.pink);
 
     ctx.strokeStyle = SHEJI_GAME_COLORS.black;
     ctx.lineWidth = 4;
@@ -918,9 +917,7 @@ function createPetalTennisGame() {
     ctx.lineTo(width / 2, height - 14);
     ctx.stroke();
 
-    for (let i = 0; i < 5; i += 1) {
-      drawGameText(ctx, "BLOOM", 56 + i * 86, 36 + (i % 2) * 54, 17, SHEJI_GAME_COLORS.pink, "center");
-    }
+    drawShejiStageFrame(ctx, width, height, "BLOOM 04", SHEJI_GAME_COLORS.green);
 
     drawPetal(ctx, player, SHEJI_GAME_COLORS.green, "PETAL");
     drawPetal(ctx, opponent, SHEJI_GAME_COLORS.white, "TAGS");
@@ -1095,7 +1092,13 @@ function createMirrorLaneGame() {
       ctx.strokeStyle = SHEJI_GAME_COLORS.black;
       ctx.lineWidth = 4;
       ctx.strokeRect(lane * laneWidth + 4, 0, laneWidth - 8, height);
+
+      ctx.fillStyle = lane % 2 === 0 ? SHEJI_GAME_COLORS.green : SHEJI_GAME_COLORS.pink;
+      ctx.fillRect(lane * laneWidth + 18, 54, laneWidth - 36, 18);
+      drawGameText(ctx, lane === 1 ? "MIRROR" : "LANE", laneX(lane), 64, 12, SHEJI_GAME_COLORS.black, "center");
     }
+
+    drawShejiStageFrame(ctx, width, height, "CHROME 05", SHEJI_GAME_COLORS.pink);
 
     obstacles.forEach((obstacle) => {
       const x = laneX(obstacle.lane);
