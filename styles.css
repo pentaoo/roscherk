@@ -1321,6 +1321,12 @@ html[lang="ru"] .collection-card__description {
   margin: 0;
 }
 
+.collection-card:not(.is-expanded) .collection-card__designer {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .collection-card.is-expanded .collection-card__designer,
 .collection-card.is-expanding-content.is-expanded .collection-card__designer,
 .collection-card.is-collapsing-content.is-expanded .collection-card__designer {
