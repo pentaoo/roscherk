@@ -82,6 +82,62 @@ function drawStickerBackground(ctx, width, height, labels) {
   });
 }
 
+function drawShejiStageFrame(ctx, width, height, label, accent = SHEJI_GAME_COLORS.pink) {
+  ctx.strokeStyle = SHEJI_GAME_COLORS.black;
+  ctx.lineWidth = 5;
+  ctx.strokeRect(10, 10, width - 20, height - 20);
+
+  drawOutlinedRect(ctx, width - 142, 22, 112, 30, accent, SHEJI_GAME_COLORS.black, 3);
+  drawGameText(ctx, label, width - 86, 38, 14, SHEJI_GAME_COLORS.black, "center");
+
+  ctx.fillStyle = SHEJI_GAME_COLORS.black;
+  for (let x = 24; x < Math.min(width - 24, 180); x += 12) {
+    ctx.fillRect(x, height - 36, 6, 18);
+  }
+}
+
+function drawShejiPrintPattern(ctx, width, height, labels, accent = SHEJI_GAME_COLORS.pink) {
+  ctx.fillStyle = SHEJI_GAME_COLORS.yellow;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.strokeStyle = "rgba(0, 0, 0, 0.16)";
+  ctx.lineWidth = 2;
+  for (let x = -height; x < width; x += 42) {
+    ctx.beginPath();
+    ctx.moveTo(x, height);
+    ctx.lineTo(x + height, 0);
+    ctx.stroke();
+  }
+
+  labels.forEach((label, index) => {
+    const x = 30 + ((index * 139) % Math.max(width - 96, 1));
+    const y = 58 + ((index * 79) % Math.max(height - 124, 1));
+    const fill = index % 2 === 0 ? SHEJI_GAME_COLORS.white : accent;
+    drawOutlinedRect(ctx, x, y, 76, 28, fill, SHEJI_GAME_COLORS.black, 2);
+    drawGameText(ctx, label, x + 38, y + 15, 13, SHEJI_GAME_COLORS.black, "center");
+  });
+}
+
+function drawShejiRulerLines(ctx, width, height, accent = SHEJI_GAME_COLORS.green) {
+  ctx.fillStyle = SHEJI_GAME_COLORS.yellow;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 0, width, 24);
+  ctx.fillRect(0, height - 24, width, 24);
+
+  ctx.strokeStyle = SHEJI_GAME_COLORS.black;
+  ctx.lineWidth = 3;
+  for (let x = 0; x <= width; x += 28) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, x % 56 === 0 ? 24 : 14);
+    ctx.moveTo(x, height);
+    ctx.lineTo(x, height - (x % 56 === 0 ? 24 : 14));
+    ctx.stroke();
+  }
+}
+
 function createLoopController(update, draw) {
   let frame = 0;
   let running = false;
@@ -225,7 +281,8 @@ function createLabelBirdGame() {
   const draw = () => {
     const { context: ctx, size } = surface;
     const { width, height } = size;
-    drawStickerBackground(ctx, width, height, ["FRUIT", "LOOK", "404", "PLU"]);
+    drawShejiPrintPattern(ctx, width, height, ["FRUIT", "LOOK", "404", "PLU"], SHEJI_GAME_COLORS.pink);
+    drawShejiStageFrame(ctx, width, height, "LABEL 01", SHEJI_GAME_COLORS.green);
 
     gates.forEach((gate) => {
       drawOutlinedRect(ctx, gate.x, -4, gate.width, gate.top, SHEJI_GAME_COLORS.pink);
@@ -423,8 +480,8 @@ function createErosionPongGame() {
   const draw = () => {
     const { context: ctx, size } = surface;
     const { width, height } = size;
-    ctx.fillStyle = SHEJI_GAME_COLORS.yellow;
-    ctx.fillRect(0, 0, width, height);
+    drawShejiRulerLines(ctx, width, height, SHEJI_GAME_COLORS.black);
+    drawShejiStageFrame(ctx, width, height, "STONE LAB", SHEJI_GAME_COLORS.white);
 
     ctx.strokeStyle = SHEJI_GAME_COLORS.black;
     ctx.lineWidth = 2;
